@@ -7,8 +7,7 @@
     "clean": "rm -rf dist",
     "build": "yarn clean && yarn build-client",
     "build-client": "webpack --config=webpack.config.ts --mode=production",
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "dev": "nodemon server/server.js",
     "dev-client": "webpack-dev-server",
     "typecheck": "tsc --noEmit"
   },
