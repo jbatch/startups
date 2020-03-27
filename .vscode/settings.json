@@ -1,0 +1,7 @@
+{
+  "editor.formatOnSave": true,
+  // forces vscode to accept tsconfig files as JSON5 (JSON with comments)
+  "files.associations": {
+    "tsconfig.json": "jsonc"
+  }
+}
