@@ -6,28 +6,35 @@ const config: webpack.Configuration = {
   context: path.resolve(__dirname),
   entry: './client/index.tsx',
   output: {
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'dist'),
   },
   devServer: {
     contentBase: path.resolve(__dirname, 'public'),
     stats: 'errors-only',
+    hot: false,
     port: 8000,
     compress: true,
-    historyApiFallback: true
+    historyApiFallback: true,
+    proxy: [
+      {
+        context: ['/socket.io', '/api'],
+        target: 'http://localhost:8080',
+      },
+    ],
   },
   devtool: 'inline-source-map',
   resolve: {
-    extensions: ['.ts', '.tsx', '.js']
+    extensions: ['.ts', '.tsx', '.js'],
   },
   module: {
-    rules: [{ test: /\.tsx?$/, loader: 'ts-loader', exclude: '/node_modules/' }]
+    rules: [{ test: /\.tsx?$/, loader: 'ts-loader', exclude: '/node_modules/' }],
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
-      filename: './index.html'
-    })
-  ]
+      filename: './index.html',
+    }),
+  ],
 };
 
 export default config;

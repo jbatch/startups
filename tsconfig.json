@@ -14,5 +14,6 @@
     "jsx": "react",
     "baseUrl": "."
   },
+  "files": ["./typings/global.d.ts"],
   "include": ["client/**/*.ts", "client/**/*.tsx"]
 }
