@@ -5,6 +5,7 @@ import { CssBaseline, AppBar, Toolbar, Typography, makeStyles, Box } from '@mate
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { Views, StartScreen, JoinGameScreen, HostGameScreen, LobbyScreen } from './views';
+import { initialiseSocket } from './sockets';
 
 const useStyles = makeStyles((theme) => ({
   main: {
@@ -27,6 +28,19 @@ export default function App() {
   const [hostRoomCode, setHostRoomCode] = useState<string>(null);
   const [roomCode, setRoomCode] = useState<string>(null);
   const [nickName, setNickName] = useState<string>(null);
+  const [playerId, setPlayerId] = useState<string>(null);
+
+  const onWelcome = (welcomData: { id: string; nickName: string; roomCode: string }) => {
+    const { id, nickName, roomCode } = welcomData;
+    setPlayerId(id);
+
+    if (nickName && roomCode) {
+      setNickName(nickName);
+      setRoomCode(roomCode);
+      setCurView(Views.LobbyScreen);
+    }
+  };
+  const socket = initialiseSocket(onWelcome);
 
   function onBackButtonPressed() {
     if (curView === Views.JoinGameScreen) {
@@ -51,6 +65,7 @@ export default function App() {
   const onHostRoomCodeChange = (roomCode: string) => {
     // hostRoomCode is only used to override the users ability to set a room code
     // so that we can re-use the
+    console.log('Room code recieved from backend', roomCode);
     setHostRoomCode(roomCode);
     setRoomCode(roomCode);
   };

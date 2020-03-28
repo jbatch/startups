@@ -4,6 +4,16 @@ const randomstring = require('randomstring');
 
 const { addUser, getUser, createRoom, getRoom, addUserToRoom } = require('./repository');
 
+// ToDo - check the code isnt existing already
+function generateRoomCode() {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  let code = '';
+  for (let i = 0; i < 4; i++) {
+    code += letters[Math.floor(Math.random() * letters.length)];
+  }
+  return code;
+}
+
 function configureSockets(appServer) {
   const server = socketIo(appServer);
 
@@ -13,7 +23,7 @@ function configureSockets(appServer) {
     client.data = {};
     client.on('handshake', handshake);
     client.on('disconnect', disconnect);
-    client.on('create-room', createNewRoom);
+    client.on('create-room', createRoom);
 
     async function handshake({ id }) {
       let exists = false;
@@ -42,11 +52,12 @@ function configureSockets(appServer) {
       console.log(`Client [${client.id}] disconnected`);
     }
 
-    async function createNewRoom() {
+    async function createRoom() {
       const roomCode = randomstring.generate({ length: 5, charset: 'alphabetic' }).toUpperCase();
       await createRoom(roomCode);
       await addUserToRoom(client.id, roomCode);
       console.log(`Created a new room ${roomCode}`);
+
       client.emit('room-created', { roomCode });
     }
   });
