@@ -21,7 +21,7 @@ export default function JoinGameScreen(props: JoinGameScreenProps) {
   const [nickName, setNickName] = useState<string>('');
   const [roomCode, setRoomCode] = useState<string>('');
   // Todo: add error messages and invalid input checks
-  // const [nameError, setNameError] = useState<string | null>(null);
+  const [nameError, setNameError] = useState<string | null>(null);
   // const [roomError, setRoomError] = useState<string | null>(null);
 
   const onSubmit = (e: React.FormEvent) => {
@@ -29,7 +29,18 @@ export default function JoinGameScreen(props: JoinGameScreenProps) {
     // Todo: add error messages and invalid input checks
     onJoinGame(nickName, hostRoomCode || roomCode);
   };
-  const onNickNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setNickName(e.target.value);
+  const allowedNickname = (nickName: string): boolean => {
+    return !['Host'].includes(nickName);
+  };
+  const onNickNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const nickName = e.target.value;
+    if (!allowedNickname(nickName)) {
+      setNameError('That nickname is not allowed');
+    } else {
+      setNameError(null);
+    }
+    setNickName(nickName);
+  };
   const onRoomCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => setRoomCode(e.target.value);
   const disableRoomCodeInput = hostRoomCode !== null;
   const roomCodeVal = hostRoomCode || roomCode;
@@ -37,7 +48,15 @@ export default function JoinGameScreen(props: JoinGameScreenProps) {
   return (
     <Container maxWidth="lg">
       <form className={classes.form} noValidate onSubmit={onSubmit}>
-        <TextField variant="outlined" fullWidth label="Nickname" value={nickName} onChange={onNickNameChange} />
+        <TextField
+          variant="outlined"
+          fullWidth
+          label="Nickname"
+          value={nickName}
+          onChange={onNickNameChange}
+          error={nameError !== null}
+          helperText={nameError}
+        />
         <TextField
           variant="outlined"
           margin="normal"
