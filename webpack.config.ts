@@ -12,6 +12,7 @@ const config: webpack.Configuration = {
     contentBase: path.resolve(__dirname, 'public'),
     stats: 'errors-only',
     hot: false,
+    inline: false,
     port: 8000,
     compress: true,
     historyApiFallback: true,

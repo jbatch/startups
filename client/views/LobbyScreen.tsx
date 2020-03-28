@@ -29,15 +29,15 @@ export default function LobbyScreen(props: LobbyScreenProps) {
 
   // Will only be called on first render
   useEffect(() => {
-    // if (hostMode === 'Player' || !hostMode) setPlayers([...players, { nickName: nickName }]);
-    // (window as any).addPlayer = (name: string) => {
-    //   setPlayers([...players, { nickName: name }]);
-    //   console.log(players);
-    // };
     socket.emit('player-join-room', { roomCode, nickName });
     socket.on('room-status', ({ roomId, players }: { roomId: string; players: Array<Player> }) => {
       setPlayers(players.filter((p) => p.nickName !== 'Host'));
     });
+
+    // make sure we clean up listeners to avoid memory leaks
+    return function cleanUp() {
+      socket.off('room-status');
+    };
   }, []);
 
   return (
