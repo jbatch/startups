@@ -26,6 +26,9 @@ export default function HostGameScreen(props: HostGameScreenProps) {
       onHostRoomCodeChange(roomCode);
     });
     socket.emit('create-room');
+    return function cleanup() {
+      socket.off('room-created');
+    };
   }, []);
 
   const setHostModeHost = () => onHostModeChange('Host');
