@@ -2,7 +2,15 @@ const socketIo = require('socket.io');
 const { v4: uuid } = require('uuid');
 const randomstring = require('randomstring');
 
-const { addUser, getUser, createRoom, getRoom, addUserToRoom, getUsersInRoom } = require('./repository');
+const {
+  addUser,
+  getUser,
+  createRoom,
+  getRoom,
+  addUserToRoom,
+  getUsersInRoom,
+  removeRoomFromUser,
+} = require('./repository');
 
 // ToDo - check the code isnt existing already
 function generateRoomCode() {
@@ -22,7 +30,8 @@ function configureSockets(appServer) {
     client.on('handshake', handshake);
     client.on('disconnect', disconnect);
     client.on('create-room', createNewRoom);
-    client.on('player-join-room', addPlayer);
+    client.on('player-join-room', playerJoinsRoom);
+    client.on('player-leave-room', playerLeavesRoom);
 
     async function handshake({ id }) {
       let exists = false;
@@ -42,8 +51,8 @@ function configureSockets(appServer) {
         nickName: exists ? exists.nickname : null,
         roomCode: exists ? exists.roomcode : null,
       });
-      if (exists) {
-        await addPlayer({ roomCode: exists.roomcode });
+      if (exists && exists.nickname && exists.roomcode) {
+        await playerJoinsRoom({ roomCode: exists.roomcode, nickName: exists.nickname });
       }
     }
 
@@ -55,17 +64,25 @@ function configureSockets(appServer) {
       const roomCode = randomstring.generate({ length: 5, charset: 'alphabetic' }).toUpperCase();
       await createRoom(roomCode);
       console.log(`Created a new room ${roomCode}`);
-      addPlayer({ roomCode });
       client.emit('room-created', { roomCode });
     }
 
-    async function addPlayer({ roomCode, nickName }) {
+    async function playerJoinsRoom({ roomCode, nickName }) {
       await addUserToRoom(roomCode, client.playerId, nickName);
       const usersInRoom = await getUsersInRoom(roomCode);
       client.join(roomCode);
       console.log('sending room status ', JSON.stringify({ roomCode, players: usersInRoom }));
       server.to(roomCode).emit('room-status', { roomCode, players: usersInRoom });
       console.log(`Player ${client.playerId} joined room ${roomCode}`);
+    }
+
+    async function playerLeavesRoom({ roomCode }) {
+      await removeRoomFromUser(client.playerId);
+      const usersInRoom = await getUsersInRoom(roomCode);
+      client.leave(roomCode);
+      console.log('sending room status ', JSON.stringify({ roomCode, players: usersInRoom }));
+      server.to(roomCode).emit('room-status', { roomCode, players: usersInRoom });
+      console.log(`Player ${client.playerId} left room ${roomCode}`);
     }
   });
 }

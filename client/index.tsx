@@ -29,10 +29,12 @@ export default function App() {
   const [roomCode, setRoomCode] = useState<string>(null);
   const [nickName, setNickName] = useState<string>(null);
   const [playerId, setPlayerId] = useState<string>(null);
+  const [socket, setSocket] = useState<SocketIOClient.Socket>(null);
 
   const onWelcome = (welcomData: { id: string; nickName: string; roomCode: string }) => {
     const { id, nickName, roomCode } = welcomData;
     setPlayerId(id);
+    localStorage.setItem('id', id);
 
     if (nickName && roomCode) {
       setNickName(nickName);
@@ -42,7 +44,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    initialiseSocket(onWelcome);
+    setSocket(initialiseSocket(onWelcome));
   }, []);
 
   function onBackButtonPressed() {
@@ -53,6 +55,7 @@ export default function App() {
     if (curView === Views.HostGameScreen) setCurView(Views.StartScreen);
     if (curView === Views.JoinGameScreen) setCurView(Views.StartScreen);
     if (curView === Views.LobbyScreen) {
+      socket.emit('player-leave-room', { roomCode });
       if (hostRoomCode) setHostRoomCode(null);
       setCurView(Views.StartScreen);
     }

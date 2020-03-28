@@ -75,6 +75,14 @@ async function getUsersInRoom(roomCode) {
   }
 }
 
+async function removeRoomFromUser(userId) {
+  try {
+    return (await db).run('UPDATE users set roomCode = null WHERE id = ?', [userId]);
+  } catch (error) {
+    console.log('Error ', error);
+  }
+}
+
 module.exports = {
   createInitialTables,
   addUser,
@@ -83,4 +91,5 @@ module.exports = {
   getRoom,
   addUserToRoom,
   getUsersInRoom,
+  removeRoomFromUser,
 };
