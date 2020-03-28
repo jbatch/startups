@@ -2,7 +2,7 @@ const socketIo = require('socket.io');
 const { v4: uuid } = require('uuid');
 const randomstring = require('randomstring');
 
-const { addUser, getUser, createRoom, getRoom } = require('./repository');
+const { addUser, getUser, createRoom, getRoom, addUserToRoom } = require('./repository');
 
 function configureSockets(appServer) {
   const server = socketIo(appServer);
@@ -45,6 +45,7 @@ function configureSockets(appServer) {
     async function createNewRoom() {
       const roomCode = randomstring.generate({ length: 5, charset: 'alphabetic' }).toUpperCase();
       await createRoom(roomCode);
+      await addUserToRoom(client.id, roomCode);
       console.log(`Created a new room ${roomCode}`);
       client.emit('room-created', { roomCode });
     }

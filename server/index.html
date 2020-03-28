@@ -13,7 +13,9 @@
         console.log({ roomCode, nickName });
         localStorage.setItem('id', id);
         console.log('here');
-        socket.emit('create-room');
+        if (!roomCode) {
+          socket.emit('create-room');
+        }
       });
       socket.on('room-created', ({ roomCode }) => {
         console.log('Room created: ' + roomCode);

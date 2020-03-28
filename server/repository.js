@@ -59,10 +59,19 @@ async function getRoom(roomId) {
   }
 }
 
+async function addUserToRoom(userId, roomId) {
+  try {
+    (await db).run('UPDATE users set roomCode = ? WHERE id = ?', [roomId, userId]);
+  } catch (error) {
+    console.log('Error ', error);
+  }
+}
+
 module.exports = {
   createInitialTables,
   addUser,
   getUser,
   createRoom,
   getRoom,
+  addUserToRoom,
 };
