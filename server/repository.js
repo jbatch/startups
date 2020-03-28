@@ -4,7 +4,7 @@ const db = Database.open('startups.sqlite');
 
 async function createInitialTables() {
   try {
-    (await db).exec(
+    await (await db).exec(
       `CREATE TABLE IF NOT EXISTS rooms 
     (
       _id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -12,7 +12,7 @@ async function createInitialTables() {
       )`
     );
     console.log('Created rooms table');
-    (await db).exec(
+    await (await db).exec(
       `CREATE TABLE IF NOT EXISTS users 
       (
         _id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -29,7 +29,7 @@ async function createInitialTables() {
 
 async function addUser(userId) {
   try {
-    (await db).run('INSERT INTO users (id) VALUES (?)', [userId]);
+    return (await db).run('INSERT INTO users (id) VALUES (?)', [userId]);
   } catch (error) {
     console.log('Error ', error);
   }
@@ -37,7 +37,7 @@ async function addUser(userId) {
 
 async function createRoom(roomId) {
   try {
-    (await db).run('INSERT INTO rooms (roomCode) VALUES (?)', [roomId]);
+    return (await db).run('INSERT INTO rooms (roomCode) VALUES (?)', [roomId]);
   } catch (error) {
     console.log('Error ', error);
   }
@@ -59,9 +59,17 @@ async function getRoom(roomId) {
   }
 }
 
-async function addUserToRoom(userId, roomId) {
+async function addUserToRoom(roomId, userId, nickName) {
   try {
-    (await db).run('UPDATE users set roomCode = ? WHERE id = ?', [roomId, userId]);
+    return (await db).run('UPDATE users set roomCode = ?, nickname = ? WHERE id = ?', [roomId, nickName, userId]);
+  } catch (error) {
+    console.log('Error ', error);
+  }
+}
+
+async function getUsersInRoom(roomCode) {
+  try {
+    return (await db).all('SELECT id, nickname as nickName FROM users WHERE roomCode = ?', [roomCode]);
   } catch (error) {
     console.log('Error ', error);
   }
@@ -74,4 +82,5 @@ module.exports = {
   createRoom,
   getRoom,
   addUserToRoom,
+  getUsersInRoom,
 };

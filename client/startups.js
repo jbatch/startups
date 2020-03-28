@@ -330,8 +330,8 @@ class Startups {
     this.currentPlayer().hand.forEach((card, i) => {
       // All cards can always be played to the field
       options.push({ action: 'PLAY', dest: 'FIELD', card: i });
-      // DOn't allow a play to play a card into the market if they just picked up that same company.
-      if (!this.state.lastDrawnCompany.symbol || card.company.symbol != this.state.lastDrawnCompany.symbol) {
+      // Don't allow a play to play a card into the market if they just picked up that same company.
+      if (!this.state.lastDrawnCompany || card.company.symbol != this.state.lastDrawnCompany.symbol) {
         options.push({ action: 'PLAY', dest: 'MARKET', card: i });
       }
     });

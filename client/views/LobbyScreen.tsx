@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Paper, Card, Box, Typography, Grid, Avatar } from '@material-ui/core';
+import { getSocket } from '../sockets';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -15,22 +16,28 @@ type LobbyScreenProps = {
 };
 
 type Player = {
+  id: string;
   nickName: string;
 };
 
-export default function HostGameScreen(props: LobbyScreenProps) {
+export default function LobbyScreen(props: LobbyScreenProps) {
   const { nickName, roomCode, hostMode } = props;
   const [players, setPlayers] = useState<Array<Player>>([]);
   const classes = useStyles();
+  const socket = getSocket();
   console.log(players);
 
   // Will only be called on first render
   useEffect(() => {
-    if (hostMode === 'Player' || !hostMode) setPlayers([...players, { nickName: nickName }]);
-    (window as any).addPlayer = (name: string) => {
-      setPlayers([...players, { nickName: name }]);
-      console.log(players);
-    };
+    // if (hostMode === 'Player' || !hostMode) setPlayers([...players, { nickName: nickName }]);
+    // (window as any).addPlayer = (name: string) => {
+    //   setPlayers([...players, { nickName: name }]);
+    //   console.log(players);
+    // };
+    socket.emit('player-join-room', { roomCode, nickName });
+    socket.on('room-status', ({ roomId, players }: { roomId: string; players: Array<Player> }) => {
+      setPlayers(players.filter((p) => p.nickName !== 'Host'));
+    });
   }, []);
 
   return (
@@ -45,10 +52,10 @@ export default function HostGameScreen(props: LobbyScreenProps) {
         <Paper className={classes.paper}>
           <Grid>
             {players.map((player) => (
-              <Box display="flex" flexDirection="row" alignItems="center">
-                <Avatar alt={nickName}>{nickName[0].toUpperCase()}</Avatar>
+              <Box display="flex" flexDirection="row" alignItems="center" key={player.id}>
+                <Avatar alt={player.nickName}>{player.nickName[0].toUpperCase()}</Avatar>
                 <Box padding={3}>
-                  <Typography variant="h6">{nickName}</Typography>
+                  <Typography variant="h6">{player.nickName}</Typography>
                 </Box>
               </Box>
             ))}

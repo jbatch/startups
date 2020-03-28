@@ -20,6 +20,9 @@
       socket.on('room-created', ({ roomCode }) => {
         console.log('Room created: ' + roomCode);
       });
+      socket.on('room-status', ({ roomCode, users }) => {
+        console.log('Got #RoomStatus update: ' + JSON.stringify({ roomCode, users }));
+      });
     </script>
   </head>
   <body>
