@@ -1,11 +1,12 @@
 import React, { Dispatch, SetStateAction, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Paper, Card, Box, Typography, Grid, Avatar } from '@material-ui/core';
+import { Container, Paper, Card, Box, Typography, Grid, Avatar, Button } from '@material-ui/core';
 import { getSocket } from '../sockets';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    padding: theme.spacing(3),
+    paddingLeft: theme.spacing(3),
+    paddingRight: theme.spacing(3),
   },
 }));
 
@@ -13,6 +14,7 @@ type LobbyScreenProps = {
   nickName: string;
   roomCode: string;
   hostMode: 'Player' | 'Host';
+  onAllPlayersReady: () => void;
 };
 
 type Player = {
@@ -21,7 +23,7 @@ type Player = {
 };
 
 export default function LobbyScreen(props: LobbyScreenProps) {
-  const { nickName, roomCode, hostMode } = props;
+  const { nickName, roomCode, hostMode, onAllPlayersReady } = props;
   const [players, setPlayers] = useState<Array<Player>>([]);
   const classes = useStyles();
   const socket = getSocket();
@@ -51,6 +53,7 @@ export default function LobbyScreen(props: LobbyScreenProps) {
       <Box mt={3}>
         <Paper className={classes.paper}>
           <Grid>
+            {players.length === 0 && <Typography>Waiting for players to join</Typography>}
             {players.map((player) => (
               <Box display="flex" flexDirection="row" alignItems="center" key={player.id}>
                 <Avatar alt={player.nickName}>{player.nickName[0].toUpperCase()}</Avatar>
@@ -61,6 +64,20 @@ export default function LobbyScreen(props: LobbyScreenProps) {
             ))}
           </Grid>
         </Paper>
+        {hostMode !== null && (
+          <Box mt={3}>
+            <Button
+              type="submit"
+              disabled={players.length < 2}
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={onAllPlayersReady}
+            >
+              All Players Ready
+            </Button>
+          </Box>
+        )}
       </Box>
     </Container>
   );
