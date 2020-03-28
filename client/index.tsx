@@ -4,7 +4,7 @@ import ReactDom from 'react-dom';
 import { CssBaseline, AppBar, Toolbar, Typography, makeStyles, Box } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { Views, StartScreen, JoinGameScreen, HostGameScreen, LobbyScreen } from './views';
+import { Views, StartScreen, JoinGameScreen, HostGameScreen, LobbyScreen, PlayGameScreen } from './views';
 import { initialiseSocket } from './sockets';
 
 const useStyles = makeStyles((theme) => ({
@@ -110,6 +110,7 @@ export default function App() {
           />
         )}
         {curView === Views.LobbyScreen && <LobbyScreen nickName={nickName} roomCode={roomCode} hostMode={hostMode} />}
+        {curView === Views.PlayGameScreen && <PlayGameScreen />}
       </main>
     </div>
   );
