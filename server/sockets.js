@@ -28,7 +28,11 @@ function configureSockets(appServer) {
       }
       client.id = id;
       client.data = clientData[id];
-      client.emit('welcome', { id, nickName: exists && exists.nickname, roomCode: exists && exists.roomcode });
+      client.emit('welcome', {
+        id,
+        nickName: exists ? exists.nickname : null,
+        roomCode: exists ? exists.roomcode : null,
+      });
     }
 
     function disconnect() {
