@@ -12,6 +12,11 @@
         console.log(`Have connected to server. I am client idbbb: ${id}`);
         console.log({ roomCode, nickName });
         localStorage.setItem('id', id);
+        console.log('here');
+        socket.emit('create-room');
+      });
+      socket.on('room-created', ({ roomCode }) => {
+        console.log('Room created: ' + roomCode);
       });
     </script>
   </head>

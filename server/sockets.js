@@ -1,6 +1,8 @@
 const socketIo = require('socket.io');
 const { v4: uuid } = require('uuid');
-const { addUser, getUser } = require('./repository');
+const randomstring = require('randomstring');
+
+const { addUser, getUser, createRoom, getRoom } = require('./repository');
 
 function configureSockets(appServer) {
   const server = socketIo(appServer);
@@ -11,6 +13,7 @@ function configureSockets(appServer) {
     client.data = {};
     client.on('handshake', handshake);
     client.on('disconnect', disconnect);
+    client.on('create-room', createNewRoom);
 
     async function handshake({ id }) {
       let exists = false;
@@ -37,6 +40,13 @@ function configureSockets(appServer) {
 
     function disconnect() {
       console.log(`Client [${client.id}] disconnected`);
+    }
+
+    async function createNewRoom() {
+      const roomCode = randomstring.generate({ length: 5, charset: 'alphabetic' }).toUpperCase();
+      await createRoom(roomCode);
+      console.log(`Created a new room ${roomCode}`);
+      client.emit('room-created', { roomCode });
     }
   });
 }
