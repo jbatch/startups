@@ -226,7 +226,7 @@ class Startups {
     if (currHighPlayers.length == 1) {
       winner = currHighPlayers[0];
     } else {
-      // Get player with least number of cards
+      // TODO tiebreaker Get player with least number of cards
     }
 
     this.state.results = {

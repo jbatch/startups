@@ -3,13 +3,14 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
       const socket = io.connect('http://localhost:8080');
-      
+
       socket.on('connect', () => {
         const id = localStorage.getItem('id');
-        socket.emit('handshake', {id});
+        socket.emit('handshake', { id });
       });
-      socket.on('welcome', function({id}) {
-        console.log(`Have connected to server. I am client id: ${id}`);
+      socket.on('welcome', function ({ id, roomCode, nickName }) {
+        console.log(`Have connected to server. I am client idbbb: ${id}`);
+        console.log({ roomCode, nickName });
         localStorage.setItem('id', id);
       });
     </script>
