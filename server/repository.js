@@ -54,7 +54,7 @@ async function getUser(userId) {
 
 async function getRoom(roomId) {
   try {
-    return (await db).get('SELECT * FROM rooms where roomCode = ?', [room]);
+    return (await db).get('SELECT * FROM rooms where roomCode = ?', [roomId]);
   } catch (error) {
     console.log('Error', err);
   }

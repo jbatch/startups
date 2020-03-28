@@ -37,6 +37,7 @@ function configureSockets(appServer) {
 
     async function handshake({ id }) {
       let exists = false;
+      let inGame = false;
       if (id) {
         exists = await getUser(id);
       }
@@ -46,12 +47,17 @@ function configureSockets(appServer) {
         console.log(`New client, assigning id [${id}]`);
       } else {
         console.log(`Player ${id} reconnected with nickname ${exists.nickname} and room ${exists.roomcode}.`);
+        if (exists.roomCode) {
+          inGame = await getRoom(exists.roomcode).ingame;
+          console.log('in game: ' + inGame);
+        }
       }
       client.playerId = id;
       client.emit('welcome', {
         id,
         nickName: exists ? exists.nickname : null,
         roomCode: exists ? exists.roomcode : null,
+        inGame,
       });
       if (exists && exists.nickname && exists.roomcode) {
         await playerJoinsRoom({ roomCode: exists.roomcode, nickName: exists.nickname });

@@ -4,6 +4,7 @@ type WelcomeData = {
   id: string;
   roomCode?: string;
   nickName?: string;
+  inGame: boolean;
 };
 
 // our single instance of socket that everyone will use
