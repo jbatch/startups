@@ -7,6 +7,8 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { Views, StartScreen, JoinGameScreen, HostGameScreen, LobbyScreen } from './views';
 import { initialiseSocket } from './sockets';
 
+import { CardScreen } from './views';
+
 const useStyles = makeStyles((theme) => ({
   main: {
     flexGrow: 1,
@@ -101,7 +103,8 @@ export default function App() {
       </AppBar>
       <main className={classes.main}>
         <div className={classes.appBarSpacer} />
-        {curView === Views.StartScreen && <StartScreen setCurView={setCurView} />}
+        {curView === Views.StartScreen && <CardScreen />}
+        {/* {curView === Views.StartScreen && <StartScreen setCurView={setCurView} />} */}
         {curView === Views.JoinGameScreen && <JoinGameScreen hostRoomCode={hostRoomCode} onJoinGame={onJoinGame} />}
         {curView === Views.HostGameScreen && (
           <HostGameScreen
