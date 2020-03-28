@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@material-ui/core": "^4.9.7",
+    "@material-ui/icons": "^4.9.1",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
     "hookrouter": "^1.2.3",
@@ -53,7 +54,7 @@
     }
   },
   "lint-staged": {
-    "*.{js,css,md}": "prettier --write"
+    "*.{js,css,md,ts,tsx}": "prettier --write"
   },
   "prettier": {
     "singleQuote": true,
