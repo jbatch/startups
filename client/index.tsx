@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, SetStateAction } from 'react';
+import React, { useState, Dispatch, SetStateAction, useEffect } from 'react';
 // @ts-ignore react-dom types seem to be super buggy, not importing them
 import ReactDom from 'react-dom';
 import { CssBaseline, AppBar, Toolbar, Typography, makeStyles, Box } from '@material-ui/core';
@@ -40,7 +40,10 @@ export default function App() {
       setCurView(Views.LobbyScreen);
     }
   };
-  const socket = initialiseSocket(onWelcome);
+
+  useEffect(() => {
+    initialiseSocket(onWelcome);
+  }, []);
 
   function onBackButtonPressed() {
     if (curView === Views.JoinGameScreen) {
