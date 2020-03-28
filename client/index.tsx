@@ -80,6 +80,7 @@ export default function App() {
     setRoomCode(roomCode);
     setCurView(Views.LobbyScreen);
   };
+  const onAllPlayersReady = () => {};
 
   return (
     <div style={{ display: 'flex' }}>
@@ -109,7 +110,14 @@ export default function App() {
             onHostRoomCodeChange={onHostRoomCodeChange}
           />
         )}
-        {curView === Views.LobbyScreen && <LobbyScreen nickName={nickName} roomCode={roomCode} hostMode={hostMode} />}
+        {curView === Views.LobbyScreen && (
+          <LobbyScreen
+            nickName={nickName}
+            roomCode={roomCode}
+            hostMode={hostMode}
+            onAllPlayersReady={onAllPlayersReady}
+          />
+        )}
         {curView === Views.PlayGameScreen && <PlayGameScreen />}
       </main>
     </div>
