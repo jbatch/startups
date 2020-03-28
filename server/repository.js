@@ -8,7 +8,8 @@ async function createInitialTables() {
       `CREATE TABLE IF NOT EXISTS rooms 
     (
       _id INTEGER PRIMARY KEY AUTOINCREMENT, 
-      roomCode VARCHAR(5) UNIQUE
+      roomCode VARCHAR(5) UNIQUE,
+      inGame Boolean DEFAULT false
       )`
     );
     console.log('Created rooms table');
@@ -59,9 +60,9 @@ async function getRoom(roomId) {
   }
 }
 
-async function addUserToRoom(roomId, userId, nickName) {
+async function addUserToRoom(roomCode, userId, nickName) {
   try {
-    return (await db).run('UPDATE users set roomCode = ?, nickname = ? WHERE id = ?', [roomId, nickName, userId]);
+    return (await db).run('UPDATE users set roomCode = ?, nickname = ? WHERE id = ?', [roomCode, nickName, userId]);
   } catch (error) {
     console.log('Error ', error);
   }
@@ -83,6 +84,14 @@ async function removeRoomFromUser(userId) {
   }
 }
 
+async function startGameForRoom(roomCode) {
+  try {
+    return (await db).run('UPDATE rooms set inGame = True WHERE roomCode = ?', [roomCode]);
+  } catch (error) {
+    console.log('Error ', error);
+  }
+}
+
 module.exports = {
   createInitialTables,
   addUser,
@@ -92,4 +101,5 @@ module.exports = {
   addUserToRoom,
   getUsersInRoom,
   removeRoomFromUser,
+  startGameForRoom,
 };

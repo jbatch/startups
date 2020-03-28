@@ -10,6 +10,7 @@ const {
   addUserToRoom,
   getUsersInRoom,
   removeRoomFromUser,
+  startGameForRoom,
 } = require('./repository');
 
 // ToDo - check the code isnt existing already
@@ -32,6 +33,7 @@ function configureSockets(appServer) {
     client.on('create-room', createNewRoom);
     client.on('player-join-room', playerJoinsRoom);
     client.on('player-leave-room', playerLeavesRoom);
+    client.on('all-players-ready', allPlayersReady);
 
     async function handshake({ id }) {
       let exists = false;
@@ -83,6 +85,12 @@ function configureSockets(appServer) {
       console.log('sending room status ', JSON.stringify({ roomCode, players: usersInRoom }));
       server.to(roomCode).emit('room-status', { roomCode, players: usersInRoom });
       console.log(`Player ${client.playerId} left room ${roomCode}`);
+    }
+
+    async function allPlayersReady({ roomCode }) {
+      await startGameForRoom(roomCode);
+      console.log(`Starting game in room ${roomCode}`);
+      server.to(roomCode).emit('start-game');
     }
   });
 }

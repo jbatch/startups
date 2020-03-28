@@ -14,7 +14,7 @@ type LobbyScreenProps = {
   nickName: string;
   roomCode: string;
   hostMode: 'Player' | 'Host';
-  onAllPlayersReady: () => void;
+  onStartGame: () => void;
 };
 
 type Player = {
@@ -23,7 +23,7 @@ type Player = {
 };
 
 export default function LobbyScreen(props: LobbyScreenProps) {
-  const { nickName, roomCode, hostMode, onAllPlayersReady } = props;
+  const { nickName, roomCode, hostMode, onStartGame } = props;
   const [players, setPlayers] = useState<Array<Player>>([]);
   const classes = useStyles();
   const socket = getSocket();
@@ -35,12 +35,19 @@ export default function LobbyScreen(props: LobbyScreenProps) {
     socket.on('room-status', ({ roomId, players }: { roomId: string; players: Array<Player> }) => {
       setPlayers(players.filter((p) => p.nickName !== 'Host'));
     });
+    socket.on('start-game', () => {
+      onStartGame();
+    });
 
     // make sure we clean up listeners to avoid memory leaks
     return function cleanUp() {
       socket.off('room-status');
     };
   }, []);
+
+  const onAllPlayersReady = () => {
+    socket.emit('all-players-ready', { roomCode });
+  };
 
   return (
     <Container maxWidth="md">

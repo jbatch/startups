@@ -80,14 +80,16 @@ export default function App() {
     setRoomCode(roomCode);
     setCurView(Views.LobbyScreen);
   };
-  const onAllPlayersReady = () => {};
+  const onStartGame = () => {
+    setCurView(Views.PlayGameScreen);
+  };
 
   return (
     <div style={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed">
         <Toolbar>
-          {shouldShowBackButton && (
+          {shouldShowBackButton(curView) && (
             <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={onBackButtonPressed}>
               <ArrowBackIcon />
             </IconButton>
@@ -111,12 +113,7 @@ export default function App() {
           />
         )}
         {curView === Views.LobbyScreen && (
-          <LobbyScreen
-            nickName={nickName}
-            roomCode={roomCode}
-            hostMode={hostMode}
-            onAllPlayersReady={onAllPlayersReady}
-          />
+          <LobbyScreen nickName={nickName} roomCode={roomCode} hostMode={hostMode} onStartGame={onStartGame} />
         )}
         {curView === Views.PlayGameScreen && <PlayGameScreen />}
       </main>
