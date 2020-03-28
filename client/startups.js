@@ -64,15 +64,30 @@ const PLAYER_TEMPLATE = {
   cardsInHand: 0,
   tokens: [],
   coins: repeat({ value: 1 }, 10),
+  info: null,
 };
 
 class Startups {
   state;
 
-  constructor(numberPlayers) {
-    this.state = DEFAULT_STATE;
-    this.state.players = repeat(PLAYER_TEMPLATE, numberPlayers);
-    this.init();
+  constructor({ state, numberPlayers, players }) {
+    if (state) {
+      this.loadState(state);
+    } else if (numberPlayers) {
+      this.state = DEFAULT_STATE;
+      this.state.players = repeat(PLAYER_TEMPLATE, numberPlayers);
+      this.init();
+    } else if (players) {
+      this.state = DEFAULT_STATE;
+      this.state.players = players.map((p) => ({ ...this.clone(PLAYER_TEMPLATE), info: p }));
+      this.init();
+    } else {
+      throw new Error('Have to supply oneof [state, numberPlayers]');
+    }
+  }
+
+  clone(obj) {
+    return JSON.parse(JSON.stringify(obj));
   }
 
   init() {

@@ -11,17 +11,10 @@ const {
   getUsersInRoom,
   removeRoomFromUser,
   startGameForRoom,
+  setGameStateForRoom,
 } = require('./repository');
 
-// ToDo - check the code isnt existing already
-function generateRoomCode() {
-  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-  let code = '';
-  for (let i = 0; i < 4; i++) {
-    code += letters[Math.floor(Math.random() * letters.length)];
-  }
-  return code;
-}
+const { Startups } = require('../client/startups');
 
 function configureSockets(appServer) {
   const server = socketIo(appServer);
@@ -34,6 +27,8 @@ function configureSockets(appServer) {
     client.on('player-join-room', playerJoinsRoom);
     client.on('player-leave-room', playerLeavesRoom);
     client.on('all-players-ready', allPlayersReady);
+    client.on('player-loaded-game', playerLoadedGame);
+    client.on('player-move', playerMove);
 
     async function handshake({ id }) {
       let exists = false;
@@ -94,11 +89,45 @@ function configureSockets(appServer) {
     }
 
     async function allPlayersReady({ roomCode }) {
-      await startGameForRoom(roomCode);
+      const usersInRoom = await getUsersInRoom(roomCode);
+      const startups = new Startups({ players: shuffle(usersInRoom) });
+      await startGameForRoom(roomCode, startups.dumpState());
       console.log(`Starting game in room ${roomCode}`);
       server.to(roomCode).emit('start-game');
     }
+
+    async function playerLoadedGame() {
+      const user = await getUser(client.playerId);
+      const usersInRoom = await getUsersInRoom(user.roomcode);
+      // Only send once to each client
+      console.log('Sending game-state to' + JSON.stringify({ user, roomCode: user.roomCode, players: usersInRoom }));
+      client.emit('game-state', { roomCode: user.roomCode, players: usersInRoom });
+    }
+
+    async function playerMove({ move }) {
+      const user = await getUser(client.playerId);
+      const room = await getRoom(user.roomcode);
+      const startups = new Startups({ state: room.gameState });
+      const validMove = startups.moves().includes(move);
+      if (validMove) {
+        startups.move(move);
+        await setGameStateForRoom(user.roomcode, startups.dumpState());
+      }
+    }
   });
+
+  function shuffle(array) {
+    let counter = array.length;
+    while (counter > 0) {
+      let index = Math.floor(Math.random() * counter);
+      counter--;
+      let temp = array[counter];
+      array[counter] = array[index];
+      array[index] = temp;
+    }
+
+    return array;
+  }
 }
 
 module.exports = {

@@ -15,5 +15,5 @@
     "baseUrl": "."
   },
   "files": ["./typings/global.d.ts"],
-  "include": ["client/**/*.ts", "client/**/*.tsx"]
+  "include": ["client/**/*.ts", "client/**/*.tsx", "startups.d.ts"]
 }

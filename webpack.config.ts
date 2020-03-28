@@ -28,7 +28,16 @@ const config: webpack.Configuration = {
     extensions: ['.ts', '.tsx', '.js'],
   },
   module: {
-    rules: [{ test: /\.tsx?$/, loader: 'ts-loader', exclude: '/node_modules/' }],
+    rules: [
+      { test: /\.tsx?$/, loader: 'ts-loader', exclude: '/node_modules/' },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'script-loader',
+        },
+      },
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({

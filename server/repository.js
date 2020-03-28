@@ -9,7 +9,8 @@ async function createInitialTables() {
     (
       _id INTEGER PRIMARY KEY AUTOINCREMENT, 
       roomCode VARCHAR(5) UNIQUE,
-      inGame Boolean DEFAULT false
+      inGame Boolean DEFAULT false,
+      gameState TEXT
       )`
     );
     console.log('Created rooms table');
@@ -84,9 +85,17 @@ async function removeRoomFromUser(userId) {
   }
 }
 
-async function startGameForRoom(roomCode) {
+async function startGameForRoom(roomCode, gameState) {
   try {
-    return (await db).run('UPDATE rooms set inGame = True WHERE roomCode = ?', [roomCode]);
+    return (await db).run('UPDATE rooms set inGame = True, gameState = ? WHERE roomCode = ?', [gameState, roomCode]);
+  } catch (error) {
+    console.log('Error ', error);
+  }
+}
+
+async function setGameStateForRoom(roomCode, gameState) {
+  try {
+    return (await db).run('UPDATE rooms set gameState = ? WHERE roomCode = ?', [gameState, roomCode]);
   } catch (error) {
     console.log('Error ', error);
   }
@@ -102,4 +111,5 @@ module.exports = {
   getUsersInRoom,
   removeRoomFromUser,
   startGameForRoom,
+  setGameStateForRoom,
 };

@@ -20,6 +20,7 @@ function shouldShowBackButton(curView: Views) {
 }
 
 type HostMode = 'Host' | 'Player' | null;
+type Player = { id: string; nickName: string };
 
 export default function App() {
   const classes = useStyles();
