@@ -7,6 +7,7 @@ import { Startups, DRAW_MOVE, PLAY_MOVE, Move, companies, Company } from '../gam
 import PlayingCard from '../components/PlayingCard';
 import Bar from '../components/Bar';
 import { ClickableCard } from '../components/ClickableCard';
+import { access } from 'fs';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -40,8 +41,6 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
 
   const classes = useStyles();
   const socket = getSocket();
-
-  // const startups = new Startups({ numberPlayers: 1 });
 
   // Will only be called on first render
   useEffect(() => {
@@ -186,51 +185,60 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
     startups: Startups;
     players: Array<Player>;
     companies: Array<Company>;
-  }) => (
-    <Grid container spacing={1}>
-      {players.map((player, i) => {
-        return (
-          <Grid item xs={6} key={'player' + i}>
-            <Paper className={classes.paper}>
-              <Box display="flex" flexDirection="row" alignItems="center">
-                {/* <Avatar alt={player.nickName} className={classes.small}>
+  }) => {
+    const companiesCountMap: Record<string, number> = companies
+      .map((c) => c.name)
+      .reduce((acc, a) => ({ ...acc, [a]: 0 }), {});
+    startups.state.players.forEach((player) => player.field.forEach((c) => companiesCountMap[c.company.name]++));
+    return (
+      <Grid container spacing={1}>
+        {players.map((player, i) => {
+          return (
+            <Grid item xs={6} key={'player' + i}>
+              <Paper className={classes.paper}>
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  {/* <Avatar alt={player.nickName} className={classes.small}>
               {player.nickName[0].toUpperCase()}
             </Avatar> */}
-                <Typography variant="h6" style={{ fontStyle: '' }}>
-                  {player.nickName}
-                </Typography>
-              </Box>
-              <hr />
-              <Box>
-                {companies.map((company) => {
-                  const count = startups.state.players[i].field.filter((card) => card.company.name === company.name)
-                    .length;
-                  const width = Math.random() * 100;
-                  const isMonopoly = width > 45;
-                  return (
-                    <Box display="flex">
-                      <Badge
-                        badgeContent={isMonopoly ? <img src="/crown2.png" className={classes.xsmall} /> : null}
-                        anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
-                      >
-                        <Avatar alt={company.name} color={company.color} className={classes.small}>
-                          {company.symbol}
-                        </Avatar>
-                      </Badge>
-                      <Box flexGrow={1} ml={1}>
-                        <Bar color={company.color} width={width}></Bar>
+                  <Typography variant="h6" style={{ fontStyle: '' }}>
+                    {player.nickName}
+                  </Typography>
+                </Box>
+                <hr />
+                <Box>
+                  {companies.map((company, ii) => {
+                    const player = startups.state.players[i];
+                    const count = player.field.filter((card) => card.company.name === company.name).length;
+                    const width =
+                      count === 0 || companiesCountMap[company.name] == 0
+                        ? 0
+                        : (count / companiesCountMap[company.name]) * 100;
+                    const isMonopoly = startups.hasMonopolyToken(i, company);
+                    return (
+                      <Box display="flex" key={'company-bar-' + ii}>
+                        <Badge
+                          badgeContent={isMonopoly ? <img src="/crown2.png" className={classes.xsmall} /> : null}
+                          anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+                        >
+                          <Avatar alt={company.name} color={company.color} className={classes.small}>
+                            {company.symbol}
+                          </Avatar>
+                        </Badge>
+                        <Box flexGrow={1} ml={1}>
+                          <Bar color={company.color} width={width}></Bar>
+                        </Box>
+                        <Typography>{count}</Typography>
                       </Box>
-                      <Typography>{count}</Typography>
-                    </Box>
-                  );
-                })}
-              </Box>
-            </Paper>
-          </Grid>
-        );
-      })}
-    </Grid>
-  );
+                    );
+                  })}
+                </Box>
+              </Paper>
+            </Grid>
+          );
+        })}
+      </Grid>
+    );
+  };
   const PlayingView = () => (
     <Container maxWidth="md">
       <Typography variant="h5" align="center">
@@ -240,22 +248,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       <Typography variant="h5" align="center">
         Actions
       </Typography>
-      <Grid container spacing={1}>
-        {startups &&
-          startups.moves().map((m, i) => {
-            return (
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                key={'action' + i}
-                onClick={() => handleActionClicked(m)}
-              >
-                {m.action}
-              </Button>
-            );
-          })}
-      </Grid>
+
       <Button type="submit" variant="contained" color="primary" onClick={showHandButtonClicked}>
         Show Hand
       </Button>

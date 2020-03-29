@@ -1,6 +1,5 @@
-import React, { Dispatch, SetStateAction, useState, useEffect } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Paper, Card, Box, Typography, Grid, Avatar, Button, Badge } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -14,7 +13,7 @@ type BarProps = {
   color: string;
 };
 
-export default function PlayingCard(props: BarProps) {
+export default function Bar(props: BarProps) {
   // const classes = useStyles();
   const { width = 0, color } = props;
 
