@@ -96,15 +96,6 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
     </div>
   );
 
-  const WaitingView = ({ curPlayer }: { curPlayer: string }) => (
-    <Container maxWidth="md">
-      <Typography variant="h5">Waiting for other players</Typography>
-      <Typography variant="h4" align="center" style={{ marginTop: '12px' }}>
-        {curPlayer}
-      </Typography>
-    </Container>
-  );
-
   const DrawingView = () => {
     const mapDrawDeckMove = (move: DRAW_MOVE, index: number) => {
       if (!move) {
@@ -251,6 +242,15 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       </Grid>
     );
   };
+  const WaitingView = ({ curPlayer }: { curPlayer: string }) => (
+    <Container maxWidth="md">
+      <Typography variant="h5">Waiting for other players</Typography>
+      <Typography variant="h4" align="center" style={{ marginTop: '12px' }}>
+        {curPlayer}
+      </Typography>
+      <PlayersComponent startups={startups} players={players} companies={companies} />
+    </Container>
+  );
   const PlayingView = () => (
     <Container maxWidth="md">
       <Typography variant="h5" align="center">
