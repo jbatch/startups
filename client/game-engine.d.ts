@@ -14,9 +14,9 @@ export class Startups {
   move(move: Move): void;
   doPlayMove(move: PLAY_MOVE): void;
   doDrawMove(move: DRAW_MOVE): void;
-  moves(): [Move];
-  getDrawMoveOptions(): [DRAW_MOVE];
-  getPlayMoveOptions(): [PLAY_MOVE];
+  moves(): Array<Move>;
+  getDrawMoveOptions(): Array<DRAW_MOVE>;
+  getPlayMoveOptions(): Array<PLAY_MOVE>;
   calcDrawCost(): number;
   payCostToDraw(): void;
   hasMonopolyToken(company: Company): boolean;
@@ -37,10 +37,10 @@ export type Company = {
 };
 
 export type State = {
-  deck: [Card];
+  deck: Array<Card>;
   cardsInDeck: number;
-  players: [Player];
-  market: [MarketCard];
+  players: Array<Player>;
+  market: Array<MarketCard>;
   turn: number;
   step: 'DRAW' | 'PLAY' | 'GAME_OVER';
   lastDrawnCompany: Company | null;
@@ -48,27 +48,27 @@ export type State = {
 };
 
 export type GameResult = {
-  companyResults: [CompanyResult];
+  companyResults: Array<CompanyResult>;
   winner: number;
 };
 
 export type CompanyResult = {
   company: Company;
   monopolyPlayer: Player | null;
-  owedCoins: [{ player: number; count: number }] | null;
+  owedCoins: Array<{ player: number; count: number }> | null;
 };
 
 export type Player = {
-  hand: [Card];
-  field: [Card];
+  hand: Array<Card>;
+  field: Array<Card>;
   cardsInHand: number;
-  tokens: [Token];
-  coins: [Coin];
+  tokens: Array<Token>;
+  coins: Array<Coin>;
   info?: Object;
 };
 
 export type MarketCard = Card & {
-  coins: [Coin];
+  coins: Array<Coin>;
 };
 
 export type Card = {
