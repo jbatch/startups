@@ -1,6 +1,7 @@
 const socketIo = require('socket.io');
 const { v4: uuid } = require('uuid');
 const randomstring = require('randomstring');
+var isEqual = require('lodash.isequal');
 
 const {
   addUser,
@@ -106,14 +107,21 @@ function configureSockets(appServer) {
     }
 
     async function playerMove({ move }) {
+      console.log(`${client.playerId} trying to do move ${JSON.stringify(move)}`);
       const user = await getUser(client.playerId);
+      const usersInRoom = await getUsersInRoom(user.roomcode);
       const room = await getRoom(user.roomcode);
       const startups = new Startups({ state: room.gameState });
-      const validMove = startups.moves().includes(move);
+      const validMove = startups.moves().find((m) => isEqual(m, move));
+      console.log('Valid move ', validMove);
+      console.log('Valid moves ', startups.moves());
       if (validMove) {
         startups.move(move);
         await setGameStateForRoom(user.roomcode, startups.dumpState());
       }
+      server
+        .to(user.roomcode)
+        .emit('game-state', { roomCode: user.roomCode, players: usersInRoom, gameState: startups.dumpState() });
     }
   });
 

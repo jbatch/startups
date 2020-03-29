@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import { Container, Typography, Button, Paper, Grid } from '@material-ui/core';
 import { getSocket } from '../sockets';
-import { Startups, DRAW_MOVE } from '../game-engine';
+import { Startups, DRAW_MOVE, Move } from '../game-engine';
 import PlayingCard from '../components/PlayingCard';
 
 const useStyles = makeStyles((theme) => ({
@@ -41,6 +41,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
         // console.log(gameState);
         setPlayers(players.filter((p) => p.nickName !== 'Host'));
         const s = new Startups({ state: gameState });
+        (window as any).startups = s;
         console.log(s);
         setStartups(s);
       }
@@ -100,6 +101,10 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       </Grid>
     </div>
   );
+  const handleActionClicked = (move: Move) => {
+    console.log('Action clicked: ', move);
+    socket.emit('player-move', { move });
+  };
 
   const WaitingView = ({ curPlayer }: { curPlayer: string }) => (
     <Container maxWidth="md">
@@ -131,7 +136,13 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
         {startups &&
           startups.moves().map((m, i) => {
             return (
-              <Button type="submit" variant="contained" color="primary" key={'action' + i}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                key={'action' + i}
+                onClick={() => handleActionClicked(m)}
+              >
                 {m.action}
               </Button>
             );
