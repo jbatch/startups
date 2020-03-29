@@ -40,6 +40,7 @@ const config: webpack.Configuration = {
       filename: './index.html',
     }),
     new CopyPlugin([{ from: 'public/*.png', to: './[name].[ext]' }]),
+    new webpack.EnvironmentPlugin({ BASE_URL: 'http://localhost:8000' }),
   ],
 };
 

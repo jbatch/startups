@@ -18,7 +18,7 @@ function getSocket() {
 }
 
 function initialiseSocket(welcomeCallback: (welcomeData: WelcomeData) => void) {
-  socket = socketIO.connect('http://localhost:8000');
+  socket = socketIO.connect(process.env.BASE_URL);
 
   socket.on('connect', () => {
     const id = localStorage.getItem('id');
