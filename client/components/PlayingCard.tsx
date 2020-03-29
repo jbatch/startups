@@ -51,7 +51,10 @@ export default function PlayingCard(props: PlayingCardProps) {
   const coinSize = `${height * 0.15}px`;
 
   return (
-    <Card style={{ height: heightStr, width: widthStr, display: 'flex', marginTop: '10px' }} onClick={onClick}>
+    <Card
+      style={{ height: heightStr, width: widthStr, display: 'flex', marginTop: '10px', userSelect: 'none' }}
+      onClick={onClick}
+    >
       <Grid container direction="column">
         <Box
           display="flex"
