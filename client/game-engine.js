@@ -233,7 +233,6 @@ class Startups {
     let currHighPlayers = [];
     this.state.players.forEach((player, i) => {
       const score = player.coins.reduce((acc, c) => acc + c.value, 0);
-      console.log(`${i}: ${score}`);
       if (score > currHigh) {
         currHigh = score;
         currHighPlayers = [{ player: i, score }];
@@ -243,16 +242,33 @@ class Startups {
     });
 
     let winner;
-    console.log('currHighPlayers ', currHighPlayers);
+    let tie;
     if (currHighPlayers.length == 1) {
       winner = currHighPlayers[0];
     } else {
-      // TODO tiebreaker Get player with least number of cards
+      let minCards = 99;
+      let minCardsPlayers = [];
+      currHighPlayers.forEach((player) => {
+        const cardsOnField = this.state.players[player.player].field.length;
+        if (cardsOnField === minCards) {
+          minCardsPlayers.push(player);
+        }
+        if (cardsOnField < minCards) {
+          minCards = this.state.players[player.player].field.length;
+          minCardsPlayers = [player];
+        }
+      });
+      if (minCardsPlayers.length === 1) {
+        winner = minCardsPlayers[0];
+      } else {
+        tie = minCardsPlayers.map((p) => p.player);
+      }
     }
 
     this.state.results = {
       companyResults,
       winner,
+      tie,
     };
   }
 

@@ -50,6 +50,7 @@ export type State = {
 export type GameResult = {
   companyResults: Array<CompanyResult>;
   winner: number;
+  tie?: [number];
 };
 
 export type CompanyResult = {
