@@ -38,7 +38,7 @@ type PlayingCardProps = {
   number: number;
   coins: number;
   height?: number;
-  onClick: () => void;
+  onClick?: () => void;
 };
 
 export default function PlayingCard(props: PlayingCardProps) {

@@ -1,14 +1,25 @@
 import React, { Dispatch, SetStateAction, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import { Container, Typography, Button, Paper, Grid } from '@material-ui/core';
+import { Container, Typography, Button, Paper, Grid, Box, Avatar, Badge } from '@material-ui/core';
 import { getSocket } from '../sockets';
-import { Startups, DRAW_MOVE, Move } from '../game-engine';
+import { Startups, DRAW_MOVE, Move, companies, Company } from '../game-engine';
 import PlayingCard from '../components/PlayingCard';
+import Bar from '../components/Bar';
+import MailIcon from '@material-ui/icons/Mail';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(1),
+  },
+  small: {
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+    fontSize: 'larger',
+  },
+  xsmall: {
+    width: theme.spacing(2),
+    height: theme.spacing(2),
   },
 }));
 
@@ -163,20 +174,65 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       </div>
     );
   };
+  const PlayersComponent = ({
+    startups,
+    players,
+    companies,
+  }: {
+    startups: Startups;
+    players: Array<Player>;
+    companies: Array<Company>;
+  }) => (
+    <Grid container spacing={1}>
+      {players.map((player, i) => {
+        return (
+          <Grid item xs={6} key={'player' + i}>
+            <Paper className={classes.paper}>
+              <Box display="flex" flexDirection="row" alignItems="center">
+                {/* <Avatar alt={player.nickName} className={classes.small}>
+              {player.nickName[0].toUpperCase()}
+            </Avatar> */}
+                <Typography variant="h6" style={{ fontStyle: '' }}>
+                  {player.nickName}
+                </Typography>
+              </Box>
+              <hr />
+              <Box>
+                {companies.map((company) => {
+                  const count = startups.state.players[i].field.filter((card) => card.company.name === company.name)
+                    .length;
+                  const width = Math.random() * 100;
+                  const isMonopoly = width > 45;
+                  return (
+                    <Box display="flex">
+                      <Badge
+                        badgeContent={isMonopoly ? <img src="/crown2.png" className={classes.xsmall} /> : null}
+                        anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+                      >
+                        <Avatar alt={company.name} color={company.color} className={classes.small}>
+                          {company.symbol}
+                        </Avatar>
+                      </Badge>
+                      <Box flexGrow={1} ml={1}>
+                        <Bar color={company.color} width={width}></Bar>
+                      </Box>
+                      <Typography>{count}</Typography>
+                    </Box>
+                  );
+                })}
+              </Box>
+            </Paper>
+          </Grid>
+        );
+      })}
+    </Grid>
+  );
   const PlayingView = () => (
     <Container maxWidth="md">
       <Typography variant="h5" align="center">
         Play the game already: "AAAA"
       </Typography>
-      <Grid container spacing={1}>
-        {players.map((player, i) => {
-          return (
-            <Grid item xs={6} key={'player' + i}>
-              <Paper className={classes.paper}>{player.nickName}</Paper>
-            </Grid>
-          );
-        })}
-      </Grid>
+      <PlayersComponent startups={startups} players={players} companies={companies} />
       <Typography variant="h5" align="center">
         Actions
       </Typography>
@@ -217,6 +273,6 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
 
   if (phase === 'GAME_OVER') return <GameOverView />;
   if (!isMyTurn) return <WaitingView curPlayer={curPlayerName} />;
-  if (phase === 'DRAW') return <DrawingView />;
+  if (phase === 'DRAW') return <PlayingView />;
   if (phase === 'PLAY') return <PlayingView />;
 }
