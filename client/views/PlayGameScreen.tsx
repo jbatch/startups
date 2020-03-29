@@ -149,7 +149,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       return (
         <PlayingCard
           name={card.company.name}
-          color={card.company.color}
+          color={move ? card.company.color : 'grey'}
           number={card.company.number}
           coins={card.coins.length}
           height={150}
@@ -225,7 +225,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
                       count === 0 || companiesCountMap[company.name] == 0
                         ? 0
                         : (count / companiesCountMap[company.name]) * 100;
-                    const isMonopoly = startups.hasMonopolyToken(i, company);
+                    const isMonopoly = startups.playerHasMonopolyToken(i, company);
                     return (
                       <Box display="flex" key={'company-bar-' + ii}>
                         <Badge

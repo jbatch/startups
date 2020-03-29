@@ -373,10 +373,10 @@ class Startups {
   }
 
   hasMonopolyToken(company) {
-    return this.currentPlayer().tokens.find((t) => t.company.symbol === company.symbol);
+    return Boolean(this.currentPlayer().tokens.find((t) => t.company.symbol === company.symbol));
   }
 
-  hasMonopolyToken(playerIndex, company) {
+  playerHasMonopolyToken(playerIndex, company) {
     if (!this.state.players[playerIndex]) {
       return false;
     }
