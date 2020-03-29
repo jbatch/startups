@@ -38,11 +38,12 @@ type PlayingCardProps = {
   number: number;
   coins: number;
   height?: number;
+  onClick: () => void;
 };
 
 export default function PlayingCard(props: PlayingCardProps) {
   const classes = useStyles();
-  const { name, color, number, coins = 0, height = 200 } = props;
+  const { name, color, number, coins = 0, height = 200, onClick } = props;
   const heightStr = `${height}px`;
   const widthStr = `${height * 0.75}px`;
   const topBarHeight = `${height * 0.2}px`;
@@ -50,7 +51,7 @@ export default function PlayingCard(props: PlayingCardProps) {
   const coinSize = `${height * 0.15}px`;
 
   return (
-    <Card style={{ height: heightStr, width: widthStr, display: 'flex', marginTop: '10px' }}>
+    <Card style={{ height: heightStr, width: widthStr, display: 'flex', marginTop: '10px' }} onClick={onClick}>
       <Grid container direction="column">
         <Box
           display="flex"
