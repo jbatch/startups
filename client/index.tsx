@@ -1,9 +1,22 @@
 import React, { useState, Dispatch, SetStateAction, useEffect } from 'react';
 // @ts-ignore react-dom types seem to be super buggy, not importing them
 import ReactDom from 'react-dom';
-import { CssBaseline, AppBar, Toolbar, Typography, makeStyles, Box } from '@material-ui/core';
+import {
+  CssBaseline,
+  AppBar,
+  Toolbar,
+  Typography,
+  makeStyles,
+  Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+} from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import HomeIcon from '@material-ui/icons/Home';
 import {
   Views,
   StartScreen,
@@ -23,8 +36,14 @@ const useStyles = makeStyles((theme) => ({
   appBarSpacer: theme.mixins.toolbar,
 }));
 
-function shouldShowBackButton(curView: Views) {
-  return [Views.HostGameScreen, Views.JoinGameScreen, Views.LobbyScreen, Views.InstructionsScreen].includes(curView);
+function shouldShowHomeButton(curView: Views) {
+  return [
+    Views.HostGameScreen,
+    Views.JoinGameScreen,
+    Views.LobbyScreen,
+    Views.InstructionsScreen,
+    Views.PlayGameScreen,
+  ].includes(curView);
 }
 
 type HostMode = 'Host' | 'Player' | null;
@@ -38,6 +57,7 @@ export default function App() {
   const [roomCode, setRoomCode] = useState<string>(null);
   const [nickName, setNickName] = useState<string>(null);
   const [playerId, setPlayerId] = useState<string>(null);
+  const [confirmationOpen, setConfirmationOpen] = useState<boolean>(false);
   const [socket, setSocket] = useState<SocketIOClient.Socket>(null);
 
   const onWelcome = (welcomData: {
@@ -73,17 +93,28 @@ export default function App() {
     setSocket(initialiseSocket(onWelcome));
   }, []);
 
-  function onBackButtonPressed() {
+  const onConfirmPressed = () => {
+    setConfirmationOpen(false);
+    // simulate hitting home again, but with confirmation set to true
+    onHomeButtonPressed(true);
+  };
+  const closeConfirmation = () => setConfirmationOpen(false);
+
+  function onHomeButtonPressed(confirmed?: boolean) {
     if (curView === Views.JoinGameScreen) {
       if (hostRoomCode) setHostRoomCode(null);
       setCurView(Views.StartScreen);
     }
     if (curView === Views.HostGameScreen) setCurView(Views.StartScreen);
     if (curView === Views.JoinGameScreen) setCurView(Views.StartScreen);
-    if (curView === Views.LobbyScreen) {
-      socket.emit('player-leave-room', { roomCode });
-      if (hostRoomCode) setHostRoomCode(null);
-      setCurView(Views.StartScreen);
+    if (curView === Views.LobbyScreen || curView === Views.PlayGameScreen) {
+      if (confirmed) {
+        socket.emit('player-leave-room', { roomCode });
+        if (hostRoomCode) setHostRoomCode(null);
+        setCurView(Views.StartScreen);
+      } else {
+        setConfirmationOpen(true);
+      }
     }
     if (curView === Views.InstructionsScreen) setCurView(Views.StartScreen);
   }
@@ -119,9 +150,9 @@ export default function App() {
       <CssBaseline />
       <AppBar position="fixed">
         <Toolbar>
-          {shouldShowBackButton(curView) && (
-            <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={onBackButtonPressed}>
-              <ArrowBackIcon />
+          {shouldShowHomeButton(curView) && (
+            <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={() => onHomeButtonPressed()}>
+              <HomeIcon />
             </IconButton>
           )}
           <Box flexGrow={1}>
@@ -148,8 +179,29 @@ export default function App() {
           <LobbyScreen nickName={nickName} roomCode={roomCode} hostMode={hostMode} onStartGame={onStartGame} />
         )}
         {curView === Views.PlayGameScreen && <PlayGameScreen playerId={playerId} />}
-        {curView === Views.InstructionsScreen && <InstructionsScreen onDoneClicked={onBackButtonPressed} />}
+        {curView === Views.InstructionsScreen && <InstructionsScreen onDoneClicked={onHomeButtonPressed} />}
       </main>
+      <Dialog
+        open={confirmationOpen}
+        onClose={closeConfirmation}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Confirm</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to leave the current game?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeConfirmation} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={onConfirmPressed} color="primary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

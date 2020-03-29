@@ -60,7 +60,11 @@ export default function LobbyScreen(props: LobbyScreenProps) {
       <Box mt={3}>
         <Paper className={classes.paper}>
           <Grid>
-            {players.length === 0 && <Typography>Waiting for players to join</Typography>}
+            {players.length === 0 && (
+              <Box pt={3} pb={3}>
+                <Typography>Waiting for players to join...</Typography>
+              </Box>
+            )}
             {players.map((player) => (
               <Box display="flex" flexDirection="row" alignItems="center" key={player.id}>
                 <Avatar alt={player.nickName}>{player.nickName[0].toUpperCase()}</Avatar>
