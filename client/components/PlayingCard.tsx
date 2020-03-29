@@ -36,19 +36,21 @@ type PlayingCardProps = {
   name: string;
   color: string;
   number: number;
+  coins: number;
   height?: number;
 };
 
 export default function PlayingCard(props: PlayingCardProps) {
   const classes = useStyles();
-  const { name, color, number, height = 200 } = props;
+  const { name, color, number, coins = 0, height = 200 } = props;
   const heightStr = `${height}px`;
   const widthStr = `${height * 0.75}px`;
   const topBarHeight = `${height * 0.2}px`;
   const boxPadding = `${height * 0.05}px`;
+  const coinSize = `${height * 0.15}px`;
 
   return (
-    <Card style={{ minHeight: heightStr, minWidth: widthStr, display: 'flex', marginTop: '10px' }}>
+    <Card style={{ height: heightStr, width: widthStr, display: 'flex', marginTop: '10px' }}>
       <Grid container direction="column">
         <Box
           display="flex"
@@ -60,10 +62,27 @@ export default function PlayingCard(props: PlayingCardProps) {
         >
           <div className={classes.badge}>{number}</div>
         </Box>
-        <Box flex="1 0 auto" maxWidth={widthStr} textAlign="center" padding={boxPadding}>
-          {name}
+        <Box
+          display="flex"
+          alignItems="center"
+          flex="1 0 auto"
+          justifyContent="center"
+          maxWidth={widthStr}
+          textAlign="center"
+          padding={boxPadding}
+        >
+          <Typography fontSize={fontSize}>{name}</Typography>
         </Box>
-        <Box flex="0 0 auto" style={{ backgroundColor: color, minHeight: topBarHeight }}></Box>
+        <Box
+          display="flex"
+          alignItems="center"
+          flex="0 0 auto"
+          style={{ backgroundColor: color, minHeight: topBarHeight }}
+        >
+          {new Array(coins).fill(1).map((_) => (
+            <img src="/coin.png" style={{ height: coinSize, width: coinSize }}></img>
+          ))}
+        </Box>
       </Grid>
     </Card>
   );
