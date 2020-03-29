@@ -12,10 +12,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type InstructionsScreenProps = {};
+type InstructionsScreenProps = {
+  onDoneClicked: () => void;
+};
 
 export default function InstructionsScreen(props: InstructionsScreenProps) {
-  // const { hostRoomCode, onJoinGame } = props;
+  const { onDoneClicked } = props;
   const classes = useStyles();
   const [page, setPage] = useState<number>(0);
 
@@ -132,14 +134,15 @@ export default function InstructionsScreen(props: InstructionsScreenProps) {
   }
   function onNextClick() {
     if (page === pages.length - 1) {
-      return;
+      return onDoneClicked();
     }
     setPage(page + 1);
   }
+  const nextButtonText = page !== pages.length - 1 ? 'Next' : 'Done';
   return (
     <Container maxWidth="lg">
       {pages[page]}
-      <Grid container>
+      <Grid container justify="space-between">
         {page !== 0 && (
           <Grid item>
             <Button variant="contained" color="primary" startIcon={<ArrowBack />} onClick={onBackClick}>
@@ -147,13 +150,11 @@ export default function InstructionsScreen(props: InstructionsScreenProps) {
             </Button>
           </Grid>
         )}
-        {page !== pages.length - 1 && (
-          <Grid item>
-            <Button variant="contained" color="primary" endIcon={<ArrowForward />} onClick={onNextClick}>
-              Next
-            </Button>
-          </Grid>
-        )}
+        <Grid item>
+          <Button variant="contained" color="primary" endIcon={<ArrowForward />} onClick={onNextClick}>
+            {nextButtonText}
+          </Button>
+        </Grid>
       </Grid>
     </Container>
   );

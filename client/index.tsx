@@ -148,7 +148,7 @@ export default function App() {
           <LobbyScreen nickName={nickName} roomCode={roomCode} hostMode={hostMode} onStartGame={onStartGame} />
         )}
         {curView === Views.PlayGameScreen && <PlayGameScreen playerId={playerId} />}
-        {curView === Views.InstructionsScreen && <InstructionsScreen />}
+        {curView === Views.InstructionsScreen && <InstructionsScreen onDoneClicked={onBackButtonPressed} />}
       </main>
     </div>
   );
