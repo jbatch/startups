@@ -220,7 +220,11 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
                     return (
                       <Box display="flex" key={'company-bar-' + ii}>
                         <Badge
-                          badgeContent={isMonopoly ? <img src="/crown2.png" className={classes.xsmall} /> : null}
+                          badgeContent={
+                            isMonopoly ? (
+                              <img src={process.env.BASE_URL + '/crown2.png'} className={classes.xsmall} />
+                            ) : null
+                          }
                           anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
                         >
                           <Avatar alt={company.name} color={company.color} className={classes.small}>
