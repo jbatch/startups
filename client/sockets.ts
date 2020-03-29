@@ -18,7 +18,8 @@ function getSocket() {
 }
 
 function initialiseSocket(welcomeCallback: (welcomeData: WelcomeData) => void) {
-  socket = socketIO.connect(process.env.BASE_URL, { path: '/startups/socket.io' });
+  const baseWithoutNamespace = process.env.BASE_URL.match(/(.*)\/startups$/)[1];
+  socket = socketIO.connect(baseWithoutNamespace, { path: '/startups/socket.io' });
 
   socket.on('connect', () => {
     console.log('Connected to server');
