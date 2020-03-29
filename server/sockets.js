@@ -43,8 +43,9 @@ function configureSockets(appServer) {
         console.log(`New client, assigning id [${id}]`);
       } else {
         console.log(`Player ${id} reconnected with nickname ${exists.nickname} and room ${exists.roomcode}.`);
-        if (exists.roomCode) {
-          inGame = await getRoom(exists.roomcode).ingame;
+        if (exists.roomcode) {
+          inGame = (await getRoom(exists.roomcode)).inGame;
+          console.log(`${id} in game? : ${JSON.stringify(inGame)}`);
         }
       }
       client.playerId = id;
