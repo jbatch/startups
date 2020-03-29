@@ -1,12 +1,12 @@
-import React, { Dispatch, SetStateAction, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import { Container, Typography, Button, Paper, Grid, Box, Avatar, Badge } from '@material-ui/core';
 import { getSocket } from '../sockets';
-import { Startups, DRAW_MOVE, Move, companies, Company } from '../game-engine';
+import { Startups, DRAW_MOVE, PLAY_MOVE, Move, companies, Company } from '../game-engine';
 import PlayingCard from '../components/PlayingCard';
 import Bar from '../components/Bar';
-import MailIcon from '@material-ui/icons/Mail';
+import { ClickableCard } from '../components/ClickableCard';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -71,6 +71,10 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   const showHandButtonClicked = () => {
     setHandDrawerOpen(true);
   };
+  const handleActionClicked = (move: Move) => {
+    console.log('Action clicked: ', move);
+    socket.emit('player-move', { move });
+  };
 
   const hand = (
     <div>
@@ -82,24 +86,16 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
           startups.state.players
             .find((p) => (p.info as Player).id === playerId)
             .hand.map((card, i) => {
-              return (
-                <PlayingCard
-                  name={card.company.name}
-                  color={card.company.color}
-                  number={card.company.number}
-                  coins={0}
-                  key={'hand' + i}
-                  height={150}
-                />
-              );
+              const moves = startups
+                .moves()
+                .filter((m) => m.action === 'PLAY')
+                .map((m) => m as PLAY_MOVE)
+                .filter((m) => m.card === i);
+              return <ClickableCard card={card} moves={moves} key={'cc' + i} onMoveSelected={handleActionClicked} />;
             })}
       </Grid>
     </div>
   );
-  const handleActionClicked = (move: Move) => {
-    console.log('Action clicked: ', move);
-    socket.emit('player-move', { move });
-  };
 
   const WaitingView = ({ curPlayer }: { curPlayer: string }) => (
     <Container maxWidth="md">
@@ -275,9 +271,9 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   if (loading) return <LoadingView />;
 
   const phase = startups.state.step;
-  const curPlayerTurn = players[startups.state.turn];
-  const curPlayerName = curPlayerTurn.nickName;
-  const isMyTurn = curPlayerTurn.id === playerId;
+  const curPlayerTurn = startups.state.players[startups.state.turn];
+  const curPlayerName = (curPlayerTurn.info as any).nickName;
+  const isMyTurn = (curPlayerTurn.info as any).id === playerId;
 
   if (phase === 'GAME_OVER') return <GameOverView />;
   if (!isMyTurn) return <WaitingView curPlayer={curPlayerName} />;
