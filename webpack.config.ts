@@ -8,6 +8,7 @@ const config: webpack.Configuration = {
   entry: './client/index.tsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
+    publicPath: process.env.BASE_URL || '/',
   },
   devServer: {
     contentBase: path.resolve(__dirname, 'public'),
