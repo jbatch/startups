@@ -21,6 +21,7 @@ function initialiseSocket(welcomeCallback: (welcomeData: WelcomeData) => void) {
   socket = socketIO.connect(process.env.BASE_URL, { path: '/startups/socket.io' });
 
   socket.on('connect', () => {
+    console.log('Connected to server');
     const id = localStorage.getItem('id');
     socket.emit('handshake', { id });
   });
