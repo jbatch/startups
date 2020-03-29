@@ -49,8 +49,8 @@ export type State = {
 
 export type GameResult = {
   companyResults: Array<CompanyResult>;
-  winner: number;
-  tie?: [number];
+  winner: { player: number; score: number };
+  tie?: Array<{ player: number; score: number }>;
 };
 
 export type CompanyResult = {

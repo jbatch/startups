@@ -57,13 +57,8 @@ export function ActionBarDrawer(props: ActionBarDrawerProps) {
                     .map((m) => m as PLAY_MOVE)
                     .filter((m) => m.card === i);
                   return (
-                    <Box ml={1} mr={1}>
-                      <ClickableCard
-                        card={card}
-                        moves={moves}
-                        key={'cc' + i}
-                        onMoveSelected={handleCardClickedFromHand}
-                      />
+                    <Box ml={1} mr={1} key={'cc' + i}>
+                      <ClickableCard card={card} moves={moves} onMoveSelected={handleCardClickedFromHand} />
                     </Box>
                   );
                 })}

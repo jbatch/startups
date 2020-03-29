@@ -123,10 +123,6 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   );
   const PlayingView = () => (
     <Container maxWidth="md">
-      <Typography variant="h5" align="center">
-        Play the game already: "AAAA"
-      </Typography>
-
       <Deck startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
       <Box mt={2} />
       <Market startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
@@ -143,9 +139,9 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
     </Container>
   );
   const GameOverView = () => {
-    const winner = startups.state.players[startups.state.results.winner];
+    const winner = startups.state.players[startups.state.results.winner.player];
     const winnerName = (winner as any).info.nickName;
-    const winnerPoints = winner.coins;
+    const winnerPoints = startups.state.results.winner.score;
     return (
       <Container>
         <Typography variant="h2" align="center">

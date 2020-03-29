@@ -40,7 +40,7 @@ export default function PlayerStats(props: PlayerStatsProps) {
     <GridList cellHeight="auto" cols={3} style={{ flexWrap: 'nowrap', transform: 'translateZ(0)' }}>
       {startups.state.players.map((player, i) => {
         return (
-          <Box mr={2} ml={2} minWidth="200px">
+          <Box mr={2} ml={2} minWidth="200px" key={'player-stats-' + i}>
             <Paper className={classes.paper}>
               <Box display="flex" flexDirection="row" alignItems="center">
                 {/* <Avatar alt={player.nickName} className={classes.small}>

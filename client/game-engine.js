@@ -261,7 +261,7 @@ class Startups {
       if (minCardsPlayers.length === 1) {
         winner = minCardsPlayers[0];
       } else {
-        tie = minCardsPlayers.map((p) => p.player);
+        tie = minCardsPlayers;
       }
     }
 
