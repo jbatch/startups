@@ -61,7 +61,7 @@ export default function PlayingCard(props: PlayingCardProps) {
           paddingRight={boxPadding}
           style={{ backgroundColor: color, minHeight: topBarHeight }}
         >
-          <div className={classes.badge}>{number}</div>
+          {number > 0 && <div className={classes.badge}>{number}</div>}
         </Box>
         <Box
           display="flex"

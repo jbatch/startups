@@ -127,7 +127,19 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   );
 
   const DrawingView = () => {
-    const mapDrawMove = (move: DRAW_MOVE, index: number) => {
+    const mapDrawMove = (move: DRAW_MOVE | undefined, index: number) => {
+      if (!move) {
+        return (
+          <PlayingCard
+            name={`Can't draw from deck`}
+            color="grey"
+            number={0}
+            coins={0}
+            height={150}
+            key={'draw-action-' + index}
+          />
+        );
+      }
       switch (move.src) {
         case 'DECK':
           let text;
@@ -165,11 +177,25 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
     return (
       <div>
         <Typography>Draw</Typography>
+        <Grid container alignItems="center" justify="center">
+          <Grid item>
+            {mapDrawMove(
+              startups
+                .moves()
+                .map((m) => m as DRAW_MOVE)
+                .filter((m) => m.src === 'DECK')[0],
+              0
+            )}
+          </Grid>
+        </Grid>
         <Grid container>
-          {startups
-            .moves()
-            .map((m) => m as DRAW_MOVE)
-            .map(mapDrawMove)}
+          <Grid item xs={4}>
+            {startups
+              .moves()
+              .map((m) => m as DRAW_MOVE)
+              .filter((m) => m.src === 'MARKET')
+              .map(mapDrawMove)}
+          </Grid>
         </Grid>
       </div>
     );
