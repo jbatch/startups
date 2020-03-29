@@ -6,3 +6,5 @@ docker/redis
 yarn-error.log
 startups.sqlite
 .DS_Store
+*~
+*.png-autosave.kra

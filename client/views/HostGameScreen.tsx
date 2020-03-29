@@ -40,13 +40,13 @@ export default function HostGameScreen(props: HostGameScreenProps) {
         <Typography>Are you using this device to play the game as well, or just to host?</Typography>
       </Paper>
       <Box m={4}>
-        <Card onClick={setHostModeHost}>
-          <img src={process.env.BASE_URL + '/HostMode.png'} style={{ width: '100%' }}></img>
+        <Card onClick={setHostModeHost} style={{ display: 'flex', justifyContent: 'center' }}>
+          <img src={process.env.BASE_URL + '/HostMode.png'} style={{ width: '65%' }}></img>
         </Card>
       </Box>
       <Box m={4}>
-        <Card onClick={setHostModePlayer}>
-          <img src={process.env.BASE_URL + '/PlayerMode.png'} style={{ width: '100%' }}></img>
+        <Card onClick={setHostModePlayer} style={{ display: 'flex', justifyContent: 'center' }}>
+          <img src={process.env.BASE_URL + '/PlayerMode.png'} style={{ width: '65%' }}></img>
         </Card>
       </Box>
     </Container>
