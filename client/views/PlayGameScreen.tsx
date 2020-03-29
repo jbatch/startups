@@ -56,6 +56,9 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   const toggleHandDraw = (open: boolean) => (event: any) => {
     setHandDrawerOpen(open);
   };
+  const showHandButtonClicked = () => {
+    setHandDrawerOpen(true);
+  };
   const handCard = [
     {
       name: 'Octocoffee',
@@ -98,11 +101,16 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
     </div>
   );
 
-  const showHandButtonClicked = () => {
-    setHandDrawerOpen(true);
-  };
-
-  return (
+  const WaitingView = ({ curPlayer }: { curPlayer: string }) => (
+    <Container maxWidth="md">
+      <Typography variant="h5">Waiting for other players</Typography>
+      <Typography variant="h4" align="center" style={{ marginTop: '12px' }}>
+        {curPlayer}
+      </Typography>
+    </Container>
+  );
+  const DrawingView = () => <div>Drawing View</div>;
+  const PlayingView = () => (
     <Container maxWidth="md">
       <Typography variant="h5" align="center">
         Play the game already: "AAAA"
@@ -137,4 +145,19 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       </Drawer>
     </Container>
   );
+  const GameOverView = () => <div>GameOver View</div>;
+  const LoadingView = () => <div>Loading...</div>;
+
+  const loading = !startups;
+  if (loading) return <LoadingView />;
+
+  const phase = startups.state.step;
+  const curPlayerTurn = players[startups.state.turn];
+  const curPlayerName = curPlayerTurn.nickName;
+  const isMyTurn = curPlayerTurn.id === playerId;
+
+  if (phase === 'GAME_OVER') return <GameOverView />;
+  if (!isMyTurn) return <WaitingView curPlayer={curPlayerName} />;
+  if (phase === 'DRAW') return <DrawingView />;
+  if (phase === 'PLAY') return <PlayingView />;
 }
