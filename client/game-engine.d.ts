@@ -20,7 +20,7 @@ export class Startups {
   calcDrawCost(): number;
   payCostToDraw(): void;
   hasMonopolyToken(company: Company): boolean;
-  hasMonopolyToken(playerIndex: number, company: Company): boolean;
+  playerHasMonopolyToken(playerIndex: number, company: Company): boolean;
 }
 
 export type Move = DRAW_MOVE | PLAY_MOVE;
