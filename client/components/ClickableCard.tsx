@@ -6,7 +6,7 @@ import ContextMenu from '../components/ContextMenu';
 type ClickableCardProps = {
   card: Card;
   moves: Array<PLAY_MOVE>;
-  onMoveSelected: (move: Move) => void;
+  onMoveSelected: (move: Move) => void | null;
 };
 
 export function ClickableCard(props: ClickableCardProps) {
@@ -14,7 +14,9 @@ export function ClickableCard(props: ClickableCardProps) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+    if (!!onMoveSelected) {
+      setAnchorEl(event.currentTarget);
+    }
   };
   return (
     <div>

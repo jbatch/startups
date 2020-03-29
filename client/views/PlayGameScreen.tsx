@@ -165,7 +165,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
           playerId={playerId}
           openDrawerName={openDrawerName}
           onClose={closeDrawer}
-          handleCardClickedFromHand={() => {}}
+          handleCardClickedFromHand={null}
         />
       </div>
     );
@@ -184,7 +184,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
         playerId={playerId}
         openDrawerName={openDrawerName}
         onClose={closeDrawer}
-        handleCardClickedFromHand={() => {}}
+        handleCardClickedFromHand={null}
       />
     </Container>
   );

@@ -32,13 +32,12 @@ type ActionBarDrawerProps = {
   playerId: string;
   openDrawerName: DrawerType;
   onClose: () => void;
-  handleCardClickedFromHand: (move: Move) => void;
+  handleCardClickedFromHand: (move: Move) => void | null;
 };
 
 export function ActionBarDrawer(props: ActionBarDrawerProps) {
   // const classes = useStyles();
   const { startups, playerId, openDrawerName, onClose, handleCardClickedFromHand } = props;
-
   return (
     <Drawer anchor="bottom" open={!!openDrawerName} onClose={onClose}>
       {openDrawerName === 'hand' && (
