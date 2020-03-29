@@ -142,7 +142,25 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       />
     </Container>
   );
-  const GameOverView = () => <div>GameOver View</div>;
+  const GameOverView = () => {
+    const winner = startups.state.players[startups.state.results.winner];
+    const winnerName = (winner as any).info.nickName;
+    const winnerPoints = winner.coins;
+    return (
+      <Container>
+        <Typography variant="h2" align="center">
+          And the winner is...
+        </Typography>
+        <Box mt={3} />
+        <Typography variant="h2" align="center">
+          {winnerName}!!
+        </Typography>
+        <Typography variant="h3" align="center">
+          {winnerPoints}!!
+        </Typography>
+      </Container>
+    );
+  };
   const LoadingView = () => <div>Loading...</div>;
 
   const loading = !startups;
