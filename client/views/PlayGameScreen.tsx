@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import { Container, Typography, Button, Paper, Grid, Box, Avatar, Badge } from '@material-ui/core';
+import SearchIcon from '@material-ui/icons/Search';
+import { Container, Typography, Button, Paper, Grid, Box, Avatar, Badge, AppBar, Toolbar } from '@material-ui/core';
 import { getSocket } from '../sockets';
 import { Startups, DRAW_MOVE, PLAY_MOVE, Move, companies, Company, Card, MarketCard } from '../game-engine';
 import PlayingCard from '../components/PlayingCard';
-import Bar from '../components/Bar';
-import { ClickableCard } from '../components/ClickableCard';
-import { access } from 'fs';
+import ActionBar, { DrawerType } from '../components/ActionBar';
+import PlayerStatsComponent from '../components/PlayerStatsComponent';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(1),
   },
-  small: {
-    width: theme.spacing(3),
-    height: theme.spacing(3),
-    fontSize: 'larger',
+  fabButton: {
+    position: 'absolute',
+    zIndex: 1,
+    top: -30,
+    left: 0,
+    right: 0,
+    margin: '0 auto',
   },
-  xsmall: {
-    width: theme.spacing(2),
-    height: theme.spacing(2),
+  spacer: {
+    height: theme.spacing(4),
   },
 }));
 
@@ -38,9 +40,15 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   const [handDrawerOpen, setHandDrawerOpen] = useState<boolean>(false);
   const [players, setPlayers] = useState<Array<Player>>([]);
   const [startups, setStartups] = useState<Startups>(null);
+  const [handOpen, setHandOpen] = useState<boolean>(false);
+  const [openDrawerName, setOpenDrawerName] = useState<DrawerType>(null);
 
   const classes = useStyles();
   const socket = getSocket();
+
+  const closeDrawer = () => setOpenDrawerName(null);
+  const openPlayersDrawer = () => setOpenDrawerName('players');
+  const openHandDrawer = () => setOpenDrawerName('hand');
 
   // Will only be called on first render
   useEffect(() => {
@@ -64,37 +72,10 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
     };
   }, []);
 
-  const toggleHandDraw = (open: boolean) => (event: any) => {
-    setHandDrawerOpen(open);
-  };
-  const showHandButtonClicked = () => {
-    setHandDrawerOpen(true);
-  };
   const handleActionClicked = (move: Move) => {
     console.log('Action clicked: ', move);
     socket.emit('player-move', { move });
   };
-
-  const hand = (
-    <div>
-      <Typography variant="h5" align="center">
-        Hand
-      </Typography>
-      <Grid container direction="row" justify="space-between" style={{ padding: '10px' }}>
-        {startups &&
-          startups.state.players
-            .find((p) => (p.info as Player).id === playerId)
-            .hand.map((card, i) => {
-              const moves = startups
-                .moves()
-                .filter((m) => m.action === 'PLAY')
-                .map((m) => m as PLAY_MOVE)
-                .filter((m) => m.card === i);
-              return <ClickableCard card={card} moves={moves} key={'cc' + i} onMoveSelected={handleActionClicked} />;
-            })}
-      </Grid>
-    </div>
-  );
 
   const DrawingView = () => {
     const mapDrawDeckMove = (move: DRAW_MOVE, index: number) => {
@@ -180,75 +161,14 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       </div>
     );
   };
-  const PlayersComponent = ({
-    startups,
-    players,
-    companies,
-  }: {
-    startups: Startups;
-    players: Array<Player>;
-    companies: Array<Company>;
-  }) => {
-    const companiesCountMap: Record<string, number> = companies
-      .map((c) => c.name)
-      .reduce((acc, a) => ({ ...acc, [a]: 0 }), {});
-    startups.state.players.forEach((player) => player.field.forEach((c) => companiesCountMap[c.company.name]++));
-    return (
-      <Grid container spacing={1}>
-        {startups.state.players.map((player, i) => {
-          return (
-            <Grid item xs={6} key={'player' + i}>
-              <Paper className={classes.paper}>
-                <Box display="flex" flexDirection="row" alignItems="center">
-                  {/* <Avatar alt={player.nickName} className={classes.small}>
-              {player.nickName[0].toUpperCase()}
-            </Avatar> */}
-                  <Typography variant="h6" style={{ fontStyle: '' }}>
-                    {(player.info as any).nickName}
-                  </Typography>
-                </Box>
-                <hr />
-                <Box>
-                  {companies.map((company, ii) => {
-                    const player = startups.state.players[i];
-                    const count = player.field.filter((card) => card.company.name === company.name).length;
-                    const width =
-                      count === 0 || companiesCountMap[company.name] == 0
-                        ? 0
-                        : (count / companiesCountMap[company.name]) * 100;
-                    const isMonopoly = startups.playerHasMonopolyToken(i, company);
-                    return (
-                      <Box display="flex" key={'company-bar-' + ii}>
-                        <Badge
-                          badgeContent={isMonopoly ? <img src="/crown2.png" className={classes.xsmall} /> : null}
-                          anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
-                        >
-                          <Avatar alt={company.name} color={company.color} className={classes.small}>
-                            {company.symbol}
-                          </Avatar>
-                        </Badge>
-                        <Box flexGrow={1} ml={1}>
-                          <Bar color={company.color} width={width}></Bar>
-                        </Box>
-                        <Typography>{count}</Typography>
-                      </Box>
-                    );
-                  })}
-                </Box>
-              </Paper>
-            </Grid>
-          );
-        })}
-      </Grid>
-    );
-  };
+
   const WaitingView = ({ curPlayer }: { curPlayer: string }) => (
     <Container maxWidth="md">
       <Typography variant="h5">Waiting for other players</Typography>
       <Typography variant="h4" align="center" style={{ marginTop: '12px' }}>
         {curPlayer}
       </Typography>
-      <PlayersComponent startups={startups} players={players} companies={companies} />
+      <PlayerStatsComponent startups={startups} companies={companies} />
     </Container>
   );
   const PlayingView = () => (
@@ -256,17 +176,29 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       <Typography variant="h5" align="center">
         Play the game already: "AAAA"
       </Typography>
-      <PlayersComponent startups={startups} players={players} companies={companies} />
+      <PlayerStatsComponent startups={startups} companies={companies} />
       <Typography variant="h5" align="center">
         Actions
       </Typography>
 
-      <Button type="submit" variant="contained" color="primary" onClick={showHandButtonClicked}>
-        Show Hand
-      </Button>
-      <Drawer anchor="bottom" open={handDrawerOpen} onClose={toggleHandDraw(false)}>
-        {hand}
-      </Drawer>
+      <AppBar position="fixed" color="primary" style={{ bottom: 0, top: 'auto' }}>
+        <Toolbar>
+          <Button type="button" fullWidth variant="contained" color="primary" onClick={openHandDrawer}>
+            Show Hand
+          </Button>
+          <Button type="button" fullWidth variant="contained" color="primary" onClick={openPlayersDrawer}>
+            Show Players
+          </Button>
+        </Toolbar>
+      </AppBar>
+
+      <ActionBar
+        startups={startups}
+        playerId={playerId}
+        openDrawerName={openDrawerName}
+        onClose={closeDrawer}
+        handleCardClickedFromHand={handleActionClicked}
+      />
     </Container>
   );
   const GameOverView = () => <div>GameOver View</div>;
