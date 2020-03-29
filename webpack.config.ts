@@ -1,6 +1,7 @@
 import path from 'path';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import CopyPlugin from 'copy-webpack-plugin';
 
 const config: webpack.Configuration = {
   context: path.resolve(__dirname),
@@ -38,6 +39,7 @@ const config: webpack.Configuration = {
       template: './public/index.html',
       filename: './index.html',
     }),
+    new CopyPlugin([{ from: 'public/*.png', to: './[name].[ext]' }]),
   ],
 };
 
