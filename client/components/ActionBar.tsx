@@ -1,6 +1,19 @@
 import React, { Dispatch, SetStateAction, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Paper, Card, Box, Typography, Grid, Avatar, Button, Badge, Drawer } from '@material-ui/core';
+import {
+  Container,
+  Paper,
+  Card,
+  Box,
+  Typography,
+  Grid,
+  Avatar,
+  Button,
+  Badge,
+  Drawer,
+  AppBar,
+  Toolbar,
+} from '@material-ui/core';
 import { Startups, companies, PLAY_MOVE, Move } from '../game-engine';
 import { ClickableCard } from './ClickableCard';
 import PlayerStatsComponent from './PlayerStatsComponent';
@@ -14,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 
 export type DrawerType = 'players' | 'hand' | null;
 
-type ActionBarProps = {
+type ActionBarDrawerProps = {
   startups: Startups;
   playerId: string;
   openDrawerName: DrawerType;
@@ -22,7 +35,7 @@ type ActionBarProps = {
   handleCardClickedFromHand: (move: Move) => void;
 };
 
-export default function ActionBar(props: ActionBarProps) {
+export function ActionBarDrawer(props: ActionBarDrawerProps) {
   // const classes = useStyles();
   const { startups, playerId, openDrawerName, onClose, handleCardClickedFromHand } = props;
 
@@ -60,10 +73,30 @@ export default function ActionBar(props: ActionBarProps) {
           <Typography variant="h5" align="center">
             Players
           </Typography>
-
           <PlayerStatsComponent startups={startups} companies={companies} />
         </Box>
       )}
     </Drawer>
+  );
+}
+
+type ActionBarProps = {
+  openHandDrawer: () => void;
+  openPlayersDrawer: () => void;
+};
+
+export default function ActionBar(props: ActionBarProps) {
+  const { openPlayersDrawer, openHandDrawer } = props;
+  return (
+    <AppBar position="fixed" color="primary" style={{ bottom: 0, top: 'auto' }}>
+      <Toolbar>
+        <Button type="button" fullWidth variant="contained" color="primary" onClick={openHandDrawer}>
+          Show Hand
+        </Button>
+        <Button type="button" fullWidth variant="contained" color="primary" onClick={openPlayersDrawer}>
+          Show Players
+        </Button>
+      </Toolbar>
+    </AppBar>
   );
 }

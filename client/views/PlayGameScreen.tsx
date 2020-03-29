@@ -6,7 +6,7 @@ import { Container, Typography, Button, Paper, Grid, Box, Avatar, Badge, AppBar,
 import { getSocket } from '../sockets';
 import { Startups, DRAW_MOVE, PLAY_MOVE, Move, companies, Company, Card, MarketCard } from '../game-engine';
 import PlayingCard from '../components/PlayingCard';
-import ActionBar, { DrawerType } from '../components/ActionBar';
+import ActionBar, { ActionBarDrawer, DrawerType } from '../components/ActionBar';
 import PlayerStatsComponent from '../components/PlayerStatsComponent';
 
 const useStyles = makeStyles((theme) => ({
@@ -158,6 +158,15 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
         <Typography>Draw</Typography>
         {deckDrawMove}
         {marketDrawMoves}
+        <ActionBar openHandDrawer={openHandDrawer} openPlayersDrawer={openPlayersDrawer} />
+
+        <ActionBarDrawer
+          startups={startups}
+          playerId={playerId}
+          openDrawerName={openDrawerName}
+          onClose={closeDrawer}
+          handleCardClickedFromHand={() => {}}
+        />
       </div>
     );
   };
@@ -168,7 +177,15 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       <Typography variant="h4" align="center" style={{ marginTop: '12px' }}>
         {curPlayer}
       </Typography>
-      <PlayerStatsComponent startups={startups} companies={companies} />
+      <ActionBar openHandDrawer={openHandDrawer} openPlayersDrawer={openPlayersDrawer} />
+
+      <ActionBarDrawer
+        startups={startups}
+        playerId={playerId}
+        openDrawerName={openDrawerName}
+        onClose={closeDrawer}
+        handleCardClickedFromHand={() => {}}
+      />
     </Container>
   );
   const PlayingView = () => (
@@ -181,18 +198,9 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
         Actions
       </Typography>
 
-      <AppBar position="fixed" color="primary" style={{ bottom: 0, top: 'auto' }}>
-        <Toolbar>
-          <Button type="button" fullWidth variant="contained" color="primary" onClick={openHandDrawer}>
-            Show Hand
-          </Button>
-          <Button type="button" fullWidth variant="contained" color="primary" onClick={openPlayersDrawer}>
-            Show Players
-          </Button>
-        </Toolbar>
-      </AppBar>
+      <ActionBar openHandDrawer={openHandDrawer} openPlayersDrawer={openPlayersDrawer} />
 
-      <ActionBar
+      <ActionBarDrawer
         startups={startups}
         playerId={playerId}
         openDrawerName={openDrawerName}
