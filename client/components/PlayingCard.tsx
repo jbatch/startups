@@ -71,7 +71,7 @@ export default function PlayingCard(props: PlayingCardProps) {
           textAlign="center"
           padding={boxPadding}
         >
-          <Typography fontSize={fontSize}>{name}</Typography>
+          <Typography>{name}</Typography>
         </Box>
         <Box
           display="flex"

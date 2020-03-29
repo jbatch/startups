@@ -4,6 +4,7 @@ import Drawer from '@material-ui/core/Drawer';
 import { Container, Typography, Button, Paper, Grid } from '@material-ui/core';
 import { getSocket } from '../sockets';
 import { Startups, DRAW_MOVE } from '../game-engine';
+import PlayingCard from '../components/PlayingCard';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -77,16 +78,23 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       <Typography variant="h5" align="center">
         Hand
       </Typography>
-      {startups &&
-        startups.state.players
-          .find((p) => (p.info as Player).id === playerId)
-          .hand.map((card, i) => {
-            return (
-              <div key={'card' + i}>
-                {card.company.name} {card.company.number}
-              </div>
-            );
-          })}
+      <Grid container direction="row" justify="space-between" style={{ padding: '10px' }}>
+        {startups &&
+          startups.state.players
+            .find((p) => (p.info as Player).id === playerId)
+            .hand.map((card, i) => {
+              return (
+                <PlayingCard
+                  name={card.company.name}
+                  color="green"
+                  number={card.company.number}
+                  coins={0}
+                  key={'hand' + i}
+                  height={150}
+                />
+              );
+            })}
+      </Grid>
     </div>
   );
 
