@@ -273,6 +273,6 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
 
   if (phase === 'GAME_OVER') return <GameOverView />;
   if (!isMyTurn) return <WaitingView curPlayer={curPlayerName} />;
-  if (phase === 'DRAW') return <PlayingView />;
+  if (phase === 'DRAW') return <DrawingView />;
   if (phase === 'PLAY') return <PlayingView />;
 }
