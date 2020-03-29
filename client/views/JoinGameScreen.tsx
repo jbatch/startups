@@ -36,9 +36,9 @@ export default function JoinGameScreen(props: JoinGameScreenProps) {
     const nickName = e.target.value;
     if (!allowedNickname(nickName)) {
       setNameError('That nickname is not allowed');
-    } else {
-      setNameError(null);
+      return;
     }
+    setNameError(null);
     setNickName(nickName);
   };
   const onRoomCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => setRoomCode(e.target.value);

@@ -20,7 +20,8 @@ async function createInitialTables() {
         _id INTEGER PRIMARY KEY AUTOINCREMENT, 
         id VARCHAR(255) UNIQUE, 
         nickname VARCHAR(255), 
-        roomcode VARCHAR(5) REFERENCES rooms(id)
+        roomcode VARCHAR(5) REFERENCES rooms(id),
+        hostMode VARCHAR(10)
       )`
     );
     console.log('Created user table');
@@ -61,9 +62,14 @@ async function getRoom(roomId) {
   }
 }
 
-async function addUserToRoom(roomCode, userId, nickName) {
+async function addUserToRoom(roomCode, userId, nickName, hostMode) {
   try {
-    return (await db).run('UPDATE users set roomCode = ?, nickname = ? WHERE id = ?', [roomCode, nickName, userId]);
+    return (await db).run('UPDATE users set roomCode = ?, nickname = ?, hostMode = ? WHERE id = ?', [
+      roomCode,
+      nickName,
+      hostMode,
+      userId,
+    ]);
   } catch (error) {
     console.log('Error ', error);
   }
@@ -71,7 +77,7 @@ async function addUserToRoom(roomCode, userId, nickName) {
 
 async function getUsersInRoom(roomCode) {
   try {
-    return (await db).all('SELECT id, nickname as nickName FROM users WHERE roomCode = ?', [roomCode]);
+    return (await db).all('SELECT id, nickname as nickName, hostMode FROM users WHERE roomCode = ?', [roomCode]);
   } catch (error) {
     console.log('Error ', error);
   }
@@ -79,7 +85,7 @@ async function getUsersInRoom(roomCode) {
 
 async function removeRoomFromUser(userId) {
   try {
-    return (await db).run('UPDATE users set roomCode = null WHERE id = ?', [userId]);
+    return (await db).run('UPDATE users set roomCode = null, hostMode = null WHERE id = ?', [userId]);
   } catch (error) {
     console.log('Error ', error);
   }

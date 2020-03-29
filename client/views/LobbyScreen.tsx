@@ -31,7 +31,7 @@ export default function LobbyScreen(props: LobbyScreenProps) {
 
   // Will only be called on first render
   useEffect(() => {
-    socket.emit('player-join-room', { roomCode, nickName });
+    socket.emit('player-join-room', { roomCode, nickName, hostMode });
     socket.on('room-status', ({ roomId, players }: { roomId: string; players: Array<Player> }) => {
       setPlayers(players.filter((p) => p.nickName !== 'Host'));
     });

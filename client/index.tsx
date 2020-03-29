@@ -32,20 +32,32 @@ export default function App() {
   const [playerId, setPlayerId] = useState<string>(null);
   const [socket, setSocket] = useState<SocketIOClient.Socket>(null);
 
-  const onWelcome = (welcomData: { id: string; nickName: string; roomCode: string; inGame: boolean }) => {
-    const { id, nickName, roomCode, inGame } = welcomData;
+  const onWelcome = (welcomData: {
+    id: string;
+    nickName?: string;
+    roomCode?: string;
+    inGame?: boolean;
+    hostMode?: HostMode;
+  }) => {
+    const { id, nickName, roomCode, inGame, hostMode } = welcomData;
     setPlayerId(id);
     localStorage.setItem('id', id);
 
-    if (nickName && roomCode) {
+    if (nickName) {
       setNickName(nickName);
+    }
+    if (roomCode) {
       setRoomCode(roomCode);
+    }
+    if (hostMode) {
+      setHostMode(hostMode);
+      setHostRoomCode(roomCode);
+    }
 
-      if (inGame) {
-        setCurView(Views.LobbyScreen);
-      } else {
-        setCurView(Views.PlayGameScreen);
-      }
+    if (roomCode && !inGame) {
+      setCurView(Views.LobbyScreen);
+    } else if (roomCode && inGame) {
+      setCurView(Views.PlayGameScreen);
     }
   };
 
