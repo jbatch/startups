@@ -176,6 +176,10 @@ class Startups {
     this.state.step = 'GAME_OVER';
     console.log(this.state.step);
 
+    // backup of the players previous states so that we can display the calculation
+    // piece by piece on the frontend
+    this.state.preCalculationPlayers = JSON.parse(JSON.stringify(this.state.players));
+
     // All players play their hands onto their field
     this.state.players.forEach((player) => {
       const cards = player.hand.splice(0, player.hand.length);

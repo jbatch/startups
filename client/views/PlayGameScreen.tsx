@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import SearchIcon from '@material-ui/icons/Search';
-import { Container, Typography, Button, Paper, Grid, Box, Avatar, Badge, AppBar, Toolbar } from '@material-ui/core';
+import { Container, Typography, Grid, Box, Avatar, Badge, AppBar, Toolbar } from '@material-ui/core';
 import { getSocket } from '../sockets';
 import { Startups, DRAW_MOVE, PLAY_MOVE, Move, companies, Company, Card, MarketCard } from '../game-engine';
 import PlayingCard from '../components/PlayingCard';
 import ActionBar, { ActionBarDrawer, DrawerType } from '../components/ActionBar';
 import PlayerStatsComponent from '../components/PlayerStatsComponent';
+import GameOverView from '../components/GameOverView';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -28,6 +27,8 @@ const useStyles = makeStyles((theme) => ({
 
 type PlayGameScreenProps = {
   playerId: string;
+  // TODO: Make sure this is persisted accross refreshes
+  isHost: boolean;
 };
 
 type Player = {
@@ -36,7 +37,9 @@ type Player = {
 };
 
 export default function PlayGameScreen(props: PlayGameScreenProps) {
-  const { playerId } = props;
+  // TODO: make sure this is peristed accross refreshes
+  // const { playerId, isHost } = props;
+  const { playerId, isHost } = props;
   const [handDrawerOpen, setHandDrawerOpen] = useState<boolean>(false);
   const [players, setPlayers] = useState<Array<Player>>([]);
   const [startups, setStartups] = useState<Startups>(null);
@@ -76,6 +79,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
     console.log('Action clicked: ', move);
     socket.emit('player-move', { move });
   };
+  const handleNextClicked = () => {};
 
   const DrawingView = () => {
     const mapDrawDeckMove = (move: DRAW_MOVE, index: number) => {
@@ -209,7 +213,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       />
     </Container>
   );
-  const GameOverView = () => <div>GameOver View</div>;
+
   const LoadingView = () => <div>Loading...</div>;
 
   const loading = !startups;
@@ -220,7 +224,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   const curPlayerName = (curPlayerTurn.info as any).nickName;
   const isMyTurn = (curPlayerTurn.info as any).id === playerId;
 
-  if (phase === 'GAME_OVER') return <GameOverView />;
+  if (phase === 'GAME_OVER') return <GameOverView startups={startups} playerId={playerId} />;
   if (!isMyTurn) return <WaitingView curPlayer={curPlayerName} />;
   if (phase === 'DRAW') return <DrawingView />;
   if (phase === 'PLAY') return <PlayingView />;
