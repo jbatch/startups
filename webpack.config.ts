@@ -30,13 +30,7 @@ const config: webpack.Configuration = {
   module: {
     rules: [
       { test: /\.tsx?$/, loader: 'ts-loader', exclude: '/node_modules/' },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'script-loader',
-        },
-      },
+      { test: /game-engine\.js?$/, loader: 'ts-loader', exclude: '/node_modules/' },
     ],
   },
   plugins: [

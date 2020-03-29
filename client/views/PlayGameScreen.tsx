@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import { Container, Typography, Button, Paper, Grid } from '@material-ui/core';
 import { getSocket } from '../sockets';
-// import '../startups';
+import { Startups, DRAW_MOVE } from '../game-engine';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type PlayGameScreenProps = {
-  // players: Array<Player>;
+  playerId: string;
 };
 
 type Player = {
@@ -21,20 +21,29 @@ type Player = {
 };
 
 export default function PlayGameScreen(props: PlayGameScreenProps) {
-  const {} = props;
+  const { playerId } = props;
   const [handDrawerOpen, setHandDrawerOpen] = useState<boolean>(false);
   const [players, setPlayers] = useState<Array<Player>>([]);
-  // console.log(Startups);
-  // const startups = new Startups(2);
+  const [startups, setStartups] = useState<Startups>(null);
+
   const classes = useStyles();
   const socket = getSocket();
 
+  // const startups = new Startups({ numberPlayers: 1 });
+
   // Will only be called on first render
   useEffect(() => {
-    socket.on('game-state', ({ roomId, players }: { roomId: string; players: Array<Player> }) => {
-      console.log('GAME-STATE');
-      setPlayers(players.filter((p) => p.nickName !== 'Host'));
-    });
+    socket.on(
+      'game-state',
+      ({ roomId, players, gameState }: { roomId: string; players: Array<Player>; gameState: string }) => {
+        console.log('GAME-STATE');
+        // console.log(gameState);
+        setPlayers(players.filter((p) => p.nickName !== 'Host'));
+        const s = new Startups({ state: gameState });
+        console.log(s);
+        setStartups(s);
+      }
+    );
     socket.emit('player-loaded-game');
 
     // make sure we clean up listeners to avoid memory leaks
@@ -68,13 +77,16 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       <Typography variant="h5" align="center">
         Hand
       </Typography>
-      {handCard.map((card, i) => {
-        return (
-          <div key={'card' + i}>
-            {card.name} {card.number}
-          </div>
-        );
-      })}
+      {startups &&
+        startups.state.players
+          .find((p) => (p.info as Player).id === playerId)
+          .hand.map((card, i) => {
+            return (
+              <div key={'card' + i}>
+                {card.company.name} {card.company.number}
+              </div>
+            );
+          })}
     </div>
   );
 
@@ -95,6 +107,19 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
             </Grid>
           );
         })}
+      </Grid>
+      <Typography variant="h5" align="center">
+        Actions
+      </Typography>
+      <Grid container spacing={1}>
+        {startups &&
+          startups.moves().map((m, i) => {
+            return (
+              <Button type="submit" variant="contained" color="primary" key={'action' + i}>
+                {m.action}
+              </Button>
+            );
+          })}
       </Grid>
       <Button type="submit" variant="contained" color="primary" onClick={showHandButtonClicked}>
         Show Hand

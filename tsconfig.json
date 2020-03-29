@@ -12,8 +12,9 @@
     "noImplicitAny": true,
     "moduleResolution": "node",
     "jsx": "react",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "allowJs": true
   },
   "files": ["./typings/global.d.ts"],
-  "include": ["client/**/*.ts", "client/**/*.tsx", "startups.d.ts"]
+  "include": ["client/**/*.ts", "client/**/*.tsx", "game-engine.d.ts"]
 }

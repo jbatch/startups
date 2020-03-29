@@ -14,7 +14,7 @@ const {
   setGameStateForRoom,
 } = require('./repository');
 
-const { Startups } = require('../client/startups');
+const { Startups } = require('../client/game-engine');
 
 function configureSockets(appServer) {
   const server = socketIo(appServer);
@@ -99,9 +99,10 @@ function configureSockets(appServer) {
     async function playerLoadedGame() {
       const user = await getUser(client.playerId);
       const usersInRoom = await getUsersInRoom(user.roomcode);
+      const room = await getRoom(user.roomcode);
       // Only send once to each client
-      console.log('Sending game-state to' + JSON.stringify({ user, roomCode: user.roomCode, players: usersInRoom }));
-      client.emit('game-state', { roomCode: user.roomCode, players: usersInRoom });
+      console.log('Sending game-state to' + JSON.stringify({ user, roomCode: user.roomCode }));
+      client.emit('game-state', { roomCode: user.roomCode, players: usersInRoom, gameState: room.gameState });
     }
 
     async function playerMove({ move }) {
