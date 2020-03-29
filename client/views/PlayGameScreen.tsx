@@ -114,7 +114,55 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       </Typography>
     </Container>
   );
-  const DrawingView = () => <div>Drawing View</div>;
+
+  const DrawingView = () => {
+    const mapDrawMove = (move: DRAW_MOVE, index: number) => {
+      switch (move.src) {
+        case 'DECK':
+          let text;
+          if (move.cost > 0) {
+            text = `Draw from deck (${move.cost} coins)`;
+          } else {
+            text = 'Draw from deck';
+          }
+          return (
+            <PlayingCard
+              name={text}
+              color="grey"
+              number={0}
+              coins={0}
+              height={150}
+              onClick={() => handleActionClicked(move)}
+              key={'draw-action-' + index}
+            />
+          );
+        case 'MARKET':
+          const card = startups.state.market[move.card];
+          return (
+            <PlayingCard
+              name={card.company.name}
+              color="green"
+              number={card.company.number}
+              coins={card.coins.length} // TODO (Update this to take in an array of coins instead of number)
+              height={150}
+              onClick={() => handleActionClicked(move)}
+              key={'draw-action-' + index}
+            />
+          );
+      }
+    };
+    return (
+      <div>
+        <Typography>Draw</Typography>
+        <Grid container>
+          {startups
+            .moves()
+            .map((m) => m as DRAW_MOVE)
+            .map(mapDrawMove)}
+        </Grid>
+      </div>
+    );
+  };
   const PlayingView = () => (
     <Container maxWidth="md">
       <Typography variant="h5" align="center">
