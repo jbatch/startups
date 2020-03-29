@@ -150,13 +150,20 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       .filter((m) => m.src === 'MARKET');
     const marketDrawMoves = (
       <Grid container direction="row" justify="space-between">
+        {marketCards.length === 0 && (
+          <Box>
+            <Typography>Market is empty</Typography>
+          </Box>
+        )}
         {marketCards.map((card, i) => mapDrawMarketMove(card, marketMoves as any, i))}
       </Grid>
     );
     return (
       <div>
-        <Typography>Draw</Typography>
+        <Typography variant="h6">It's your turn to draw a card!</Typography>
         {deckDrawMove}
+        <Box mt={2} />
+        <Typography variant="h5">Market</Typography>
         {marketDrawMoves}
         <ActionBar openHandDrawer={openHandDrawer} openPlayersDrawer={openPlayersDrawer} />
 
