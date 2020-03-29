@@ -13,6 +13,7 @@ import {
   Drawer,
   AppBar,
   Toolbar,
+  GridList,
 } from '@material-ui/core';
 import { Startups, companies, PLAY_MOVE, Move } from '../game-engine';
 import { ClickableCard } from './ClickableCard';
@@ -45,7 +46,7 @@ export function ActionBarDrawer(props: ActionBarDrawerProps) {
           <Typography variant="h5" align="center">
             Hand
           </Typography>
-          <Grid container direction="row" justify="space-between" style={{ padding: '10px' }}>
+          <GridList cols={3} style={{ flexWrap: 'nowrap', transform: 'translateZ(0)' }}>
             {startups &&
               startups.state.players
                 .find((p) => (p.info as any).id === playerId)
@@ -56,15 +57,17 @@ export function ActionBarDrawer(props: ActionBarDrawerProps) {
                     .map((m) => m as PLAY_MOVE)
                     .filter((m) => m.card === i);
                   return (
-                    <ClickableCard
-                      card={card}
-                      moves={moves}
-                      key={'cc' + i}
-                      onMoveSelected={handleCardClickedFromHand}
-                    />
+                    <Box ml={1} mr={1}>
+                      <ClickableCard
+                        card={card}
+                        moves={moves}
+                        key={'cc' + i}
+                        onMoveSelected={handleCardClickedFromHand}
+                      />
+                    </Box>
                   );
                 })}
-          </Grid>
+          </GridList>
         </Box>
       )}
       {openDrawerName === 'players' && (

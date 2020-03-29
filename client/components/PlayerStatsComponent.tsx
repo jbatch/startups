@@ -1,14 +1,15 @@
 import React, { Dispatch, SetStateAction, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Paper, Card, Box, Typography, Grid, Avatar, Button, Badge } from '@material-ui/core';
+import { Container, Paper, Card, Box, Typography, Grid, Avatar, Button, Badge, GridList } from '@material-ui/core';
 import { getSocket } from '../sockets';
 import { Startups, Company } from 'client/game-engine';
 import Bar from './Bar';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    paddingLeft: theme.spacing(3),
-    paddingRight: theme.spacing(3),
+    padding: theme.spacing(3),
+    marginRight: theme.spacing(2),
+    width: '200px',
   },
   small: {
     width: theme.spacing(3),
@@ -36,10 +37,10 @@ export default function PlayerStats(props: PlayerStatsProps) {
   startups.state.players.forEach((player) => player.field.forEach((c) => companiesCountMap[c.company.name]++));
 
   return (
-    <Grid container spacing={1}>
+    <GridList cellHeight="auto" cols={3} style={{ flexWrap: 'nowrap', transform: 'translateZ(0)' }}>
       {startups.state.players.map((player, i) => {
         return (
-          <Grid item xs={6} key={'player' + i}>
+          <Box mr={2} ml={2} minWidth="200px">
             <Paper className={classes.paper}>
               <Box display="flex" flexDirection="row" alignItems="center">
                 {/* <Avatar alt={player.nickName} className={classes.small}>
@@ -76,15 +77,17 @@ export default function PlayerStats(props: PlayerStatsProps) {
                       <Box flexGrow={1} ml={1}>
                         <Bar color={company.color} width={width}></Bar>
                       </Box>
-                      <Typography>{count}</Typography>
+                      <Box ml={1}>
+                        <Typography>{count}</Typography>
+                      </Box>
                     </Box>
                   );
                 })}
               </Box>
             </Paper>
-          </Grid>
+          </Box>
         );
       })}
-    </Grid>
+    </GridList>
   );
 }

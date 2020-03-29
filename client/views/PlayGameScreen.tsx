@@ -8,6 +8,7 @@ import { Startups, DRAW_MOVE, PLAY_MOVE, Move, companies, Company, Card, MarketC
 import PlayingCard from '../components/PlayingCard';
 import ActionBar, { ActionBarDrawer, DrawerType } from '../components/ActionBar';
 import PlayerStatsComponent from '../components/PlayerStatsComponent';
+import { Deck, Market } from '../components/DeckAndMarket';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -78,85 +79,12 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   };
 
   const DrawingView = () => {
-    const mapDrawDeckMove = (move: DRAW_MOVE, index: number) => {
-      if (!move) {
-        return (
-          <PlayingCard
-            name={`Can't draw from deck`}
-            color="grey"
-            number={0}
-            coins={0}
-            height={150}
-            key={'draw-deck-action-' + index}
-          />
-        );
-      }
-      if (move.src !== 'DECK') {
-        throw new Error('Impossible');
-      }
-      let text;
-      if (move.cost > 0) {
-        text = `Draw from deck (${move.cost} coins)`;
-      } else {
-        text = 'Draw from deck';
-      }
-      return (
-        <PlayingCard
-          name={text}
-          color="grey"
-          number={0}
-          coins={0}
-          height={150}
-          onClick={() => handleActionClicked(move)}
-          key={'draw-deck-action-' + index}
-        />
-      );
-    };
-    const mapDrawMarketMove = (
-      card: MarketCard,
-      moves: Array<{ action: 'DRAW'; src: 'MARKET'; card: number }>,
-      index: number
-    ) => {
-      const move = moves.find((m) => m.card === index);
-      return (
-        <PlayingCard
-          name={card.company.name}
-          color={move ? card.company.color : 'grey'}
-          number={card.company.number}
-          coins={card.coins.length}
-          height={150}
-          onClick={move ? () => handleActionClicked(move) : undefined}
-          key={'draw-deck-action-' + index}
-        />
-      );
-    };
-    const deckDrawMove = (
-      <Grid container alignItems="center" justify="center">
-        <Grid item>
-          {mapDrawDeckMove(
-            startups
-              .moves()
-              .map((m) => m as DRAW_MOVE)
-              .filter((m) => m.src === 'DECK')[0],
-            0
-          )}
-        </Grid>
-      </Grid>
-    );
-    const marketCards = startups.state.market;
-    const marketMoves = startups
-      .moves()
-      .map((m) => m as DRAW_MOVE)
-      .filter((m) => m.src === 'MARKET');
-    const marketDrawMoves = (
-      <Grid container direction="row" justify="space-between">
-        {marketCards.map((card, i) => mapDrawMarketMove(card, marketMoves as any, i))}
-      </Grid>
-    );
     return (
       <div>
-        {deckDrawMove}
-        {marketDrawMoves}
+        <Typography variant="h6">It's your turn to draw a card!</Typography>
+        <Deck startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
+        <Box mt={2} />
+        <Market startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
         <ActionBar openHandDrawer={openHandDrawer} openPlayersDrawer={openPlayersDrawer} />
 
         <ActionBarDrawer
@@ -172,10 +100,16 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
 
   const WaitingView = ({ curPlayer }: { curPlayer: string }) => (
     <Container maxWidth="md">
-      <Typography variant="h5">Waiting for other players</Typography>
-      <Typography variant="h4" align="center" style={{ marginTop: '12px' }}>
-        {curPlayer}
+      <Typography variant="h5">
+        Waiting for <strong>{curPlayer}</strong>...
       </Typography>
+
+      <Box mt={2} />
+
+      <Deck startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
+      <Box mt={2} />
+      <Market startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
+
       <ActionBar openHandDrawer={openHandDrawer} openPlayersDrawer={openPlayersDrawer} />
 
       <ActionBarDrawer
@@ -189,7 +123,14 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   );
   const PlayingView = () => (
     <Container maxWidth="md">
-      <PlayerStatsComponent startups={startups} companies={companies} />
+      <Typography variant="h5" align="center">
+        Play the game already: "AAAA"
+      </Typography>
+
+      <Deck startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
+      <Box mt={2} />
+      <Market startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
+
       <ActionBar openHandDrawer={openHandDrawer} openPlayersDrawer={openPlayersDrawer} />
 
       <ActionBarDrawer
