@@ -155,7 +155,6 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
     );
     return (
       <div>
-        <Typography>Draw</Typography>
         {deckDrawMove}
         {marketDrawMoves}
         <ActionBar openHandDrawer={openHandDrawer} openPlayersDrawer={openPlayersDrawer} />
@@ -190,14 +189,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   );
   const PlayingView = () => (
     <Container maxWidth="md">
-      <Typography variant="h5" align="center">
-        Play the game already: "AAAA"
-      </Typography>
       <PlayerStatsComponent startups={startups} companies={companies} />
-      <Typography variant="h5" align="center">
-        Actions
-      </Typography>
-
       <ActionBar openHandDrawer={openHandDrawer} openPlayersDrawer={openPlayersDrawer} />
 
       <ActionBarDrawer
