@@ -8,6 +8,7 @@ const config: webpack.Configuration = {
   entry: './client/index.tsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
+    publicPath: process.env.BASE_URL || '/',
   },
   devServer: {
     contentBase: path.resolve(__dirname, 'public'),
@@ -40,6 +41,7 @@ const config: webpack.Configuration = {
       filename: './index.html',
     }),
     new CopyPlugin([{ from: 'public/*.png', to: './[name].[ext]' }]),
+    new webpack.EnvironmentPlugin({ BASE_URL: 'http://localhost:8000' }),
   ],
 };
 

@@ -81,7 +81,11 @@ export default function PlayingCard(props: PlayingCardProps) {
           style={{ backgroundColor: color, minHeight: topBarHeight }}
         >
           {new Array(coins).fill(1).map((_, i) => (
-            <img src="/coin.png" style={{ height: coinSize, width: coinSize }} key={'coin-img' + i}></img>
+            <img
+              src={process.env.BASE_URL + '/coin.png'}
+              style={{ height: coinSize, width: coinSize }}
+              key={'coin-img' + i}
+            ></img>
           ))}
         </Box>
       </Grid>

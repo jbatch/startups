@@ -34,9 +34,11 @@ function configureSockets(appServer) {
     async function handshake({ id }) {
       let exists = false;
       let inGame = false;
+      console.log('Handshake - ID: ' + id);
       if (id) {
         exists = await getUser(id);
       }
+      console.log('Handshake - Exists ' + exists);
       if (!exists) {
         id = uuid();
         await addUser(id);
@@ -48,6 +50,7 @@ function configureSockets(appServer) {
           console.log('in game: ' + inGame);
         }
       }
+      console.log('Handshake 2  - ID: ' + id);
       client.playerId = id;
       client.emit('welcome', {
         id,

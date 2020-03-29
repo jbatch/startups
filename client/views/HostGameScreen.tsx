@@ -41,12 +41,12 @@ export default function HostGameScreen(props: HostGameScreenProps) {
       </Paper>
       <Box m={4}>
         <Card onClick={setHostModeHost}>
-          <img src="/HostMode.png" style={{ width: '100%' }}></img>
+          <img src={process.env.BASE_URL + 'HostMode.png'} style={{ width: '100%' }}></img>
         </Card>
       </Box>
       <Box m={4}>
         <Card onClick={setHostModePlayer}>
-          <img src="/PlayerMode.png" style={{ width: '100%' }}></img>
+          <img src={process.env.BASE_URL + 'PlayerMode.png'} style={{ width: '100%' }}></img>
         </Card>
       </Box>
     </Container>

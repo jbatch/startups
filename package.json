@@ -6,6 +6,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "yarn clean && yarn build-client",
+    "build:prod": "BASE_URL=https://jbat.ch/startups yarn build",
     "build-client": "webpack --config=webpack.config.ts --mode=production",
     "dev": "nodemon server/server.js",
     "dev-client": "webpack-dev-server",
