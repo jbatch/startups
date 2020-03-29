@@ -4,7 +4,15 @@ import ReactDom from 'react-dom';
 import { CssBaseline, AppBar, Toolbar, Typography, makeStyles, Box } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { Views, StartScreen, JoinGameScreen, HostGameScreen, LobbyScreen, PlayGameScreen } from './views';
+import {
+  Views,
+  StartScreen,
+  JoinGameScreen,
+  HostGameScreen,
+  LobbyScreen,
+  PlayGameScreen,
+  InstructionsScreen,
+} from './views';
 import { initialiseSocket } from './sockets';
 
 const useStyles = makeStyles((theme) => ({
@@ -16,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function shouldShowBackButton(curView: Views) {
-  return [Views.HostGameScreen, Views.JoinGameScreen, Views.LobbyScreen].includes(curView);
+  return [Views.HostGameScreen, Views.JoinGameScreen, Views.LobbyScreen, Views.InstructionsScreen].includes(curView);
 }
 
 type HostMode = 'Host' | 'Player' | null;
@@ -77,6 +85,7 @@ export default function App() {
       if (hostRoomCode) setHostRoomCode(null);
       setCurView(Views.StartScreen);
     }
+    if (curView === Views.InstructionsScreen) setCurView(Views.StartScreen);
   }
   const onHostModeChange = (hostMode: HostMode) => {
     setHostMode(hostMode);
@@ -101,6 +110,9 @@ export default function App() {
   const onStartGame = () => {
     setCurView(Views.PlayGameScreen);
   };
+  const onInstructionsClick = () => {
+    setCurView(Views.InstructionsScreen);
+  };
 
   return (
     <div style={{ display: 'flex' }}>
@@ -121,7 +133,9 @@ export default function App() {
       </AppBar>
       <main className={classes.main}>
         <div className={classes.appBarSpacer} />
-        {curView === Views.StartScreen && <StartScreen setCurView={setCurView} />}
+        {curView === Views.StartScreen && (
+          <StartScreen setCurView={setCurView} onInstructionsClick={onInstructionsClick} />
+        )}
         {curView === Views.JoinGameScreen && <JoinGameScreen hostRoomCode={hostRoomCode} onJoinGame={onJoinGame} />}
         {curView === Views.HostGameScreen && (
           <HostGameScreen
@@ -134,6 +148,7 @@ export default function App() {
           <LobbyScreen nickName={nickName} roomCode={roomCode} hostMode={hostMode} onStartGame={onStartGame} />
         )}
         {curView === Views.PlayGameScreen && <PlayGameScreen playerId={playerId} />}
+        {curView === Views.InstructionsScreen && <InstructionsScreen />}
       </main>
     </div>
   );

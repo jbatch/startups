@@ -7,6 +7,7 @@ enum Views {
   HostGameScreen,
   LobbyScreen,
   PlayGameScreen,
+  InstructionsScreen,
 }
 
 // Cant export enums in default exports

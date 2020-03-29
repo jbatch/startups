@@ -11,11 +11,12 @@ const useStyles = makeStyles((theme) => ({
 
 type StartScreenProps = {
   setCurView: Dispatch<SetStateAction<Views>>;
+  onInstructionsClick: () => void;
 };
 
 export default function StartScreen(props: StartScreenProps) {
   const classes = useStyles();
-  const { setCurView } = props;
+  const { setCurView, onInstructionsClick } = props;
 
   const setViewHostGame = () => setCurView(Views.HostGameScreen);
   const setViewJoinGame = () => setCurView(Views.JoinGameScreen);
@@ -43,7 +44,7 @@ export default function StartScreen(props: StartScreenProps) {
         </Grid>
       </Box>
       <Box mt={3} textAlign="center">
-        <Link href="#" variant="body2">
+        <Link href="#" variant="body2" onClick={onInstructionsClick}>
           {'Instructions'}
         </Link>
       </Box>
