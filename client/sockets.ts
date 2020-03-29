@@ -18,8 +18,13 @@ function getSocket() {
 }
 
 function initialiseSocket(welcomeCallback: (welcomeData: WelcomeData) => void) {
-  const baseWithoutNamespace = process.env.BASE_URL.match(/(.*)\/startups$/)[1];
-  socket = socketIO.connect(baseWithoutNamespace, { path: '/startups/socket.io' });
+  const regex = /(.*?)\/startups$/;
+  if (process.env.BASE_URL.match(regex)) {
+    let uri = process.env.BASE_URL.match(regex)[1];
+    socket = socketIO.connect(uri, { path: '/startups/socket.io' });
+  } else {
+    socket = socketIO.connect(process.env.BASE_URL);
+  }
 
   socket.on('connect', () => {
     console.log('Connected to server');
