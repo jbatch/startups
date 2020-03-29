@@ -114,7 +114,26 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       </Typography>
     </Container>
   );
-  const DrawingView = () => <div>Drawing View</div>;
+  const DrawingView = () => (
+    <div>
+      <Typography>Draw</Typography>
+      <Grid container>
+        {startups.moves().map((m, i) => {
+          return (
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              key={'action' + i}
+              onClick={() => handleActionClicked(m)}
+            >
+              {m.action}
+            </Button>
+          );
+        })}
+      </Grid>
+    </div>
+  );
   const PlayingView = () => (
     <Container maxWidth="md">
       <Typography variant="h5" align="center">
