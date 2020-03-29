@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import { Container, Typography, Button, Paper, Grid, Box, Avatar, Badge } from '@material-ui/core';
 import { getSocket } from '../sockets';
-import { Startups, DRAW_MOVE, PLAY_MOVE, Move, companies, Company } from '../game-engine';
+import { Startups, DRAW_MOVE, PLAY_MOVE, Move, companies, Company, Card, MarketCard } from '../game-engine';
 import PlayingCard from '../components/PlayingCard';
 import Bar from '../components/Bar';
 import { ClickableCard } from '../components/ClickableCard';
@@ -106,7 +106,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   );
 
   const DrawingView = () => {
-    const mapDrawMove = (move: DRAW_MOVE | undefined, index: number) => {
+    const mapDrawDeckMove = (move: DRAW_MOVE, index: number) => {
       if (!move) {
         return (
           <PlayingCard
@@ -119,61 +119,73 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
           />
         );
       }
-      switch (move.src) {
-        case 'DECK':
-          let text;
-          if (move.cost > 0) {
-            text = `Draw from deck (${move.cost} coins)`;
-          } else {
-            text = 'Draw from deck';
-          }
-          return (
-            <PlayingCard
-              name={text}
-              color="grey"
-              number={0}
-              coins={0}
-              height={150}
-              onClick={() => handleActionClicked(move)}
-              key={'draw-deck-action-' + index}
-            />
-          );
-        case 'MARKET':
-          const card = startups.state.market[move.card];
-          return (
-            <PlayingCard
-              name={card.company.name}
-              color={card.company.color}
-              number={card.company.number}
-              coins={card.coins.length} // TODO (Update this to take in an array of coins instead of number)
-              height={150}
-              onClick={() => handleActionClicked(move)}
-              key={'draw-market-action-' + index}
-            />
-          );
+      if (move.src !== 'DECK') {
+        throw new Error('Impossible');
       }
+      let text;
+      if (move.cost > 0) {
+        text = `Draw from deck (${move.cost} coins)`;
+      } else {
+        text = 'Draw from deck';
+      }
+      return (
+        <PlayingCard
+          name={text}
+          color="grey"
+          number={0}
+          coins={0}
+          height={150}
+          onClick={() => handleActionClicked(move)}
+          key={'draw-deck-action-' + index}
+        />
+      );
     };
+    const mapDrawMarketMove = (
+      card: MarketCard,
+      moves: Array<{ action: 'DRAW'; src: 'MARKET'; card: number }>,
+      index: number
+    ) => {
+      const move = moves.find((m) => m.card === index);
+      return (
+        <PlayingCard
+          name={card.company.name}
+          color={card.company.color}
+          number={card.company.number}
+          coins={card.coins.length}
+          height={150}
+          onClick={move ? () => handleActionClicked(move) : undefined}
+          key={'draw-deck-action-' + index}
+        />
+      );
+    };
+    const deckDrawMove = (
+      <Grid container alignItems="center" justify="center">
+        <Grid item>
+          {mapDrawDeckMove(
+            startups
+              .moves()
+              .map((m) => m as DRAW_MOVE)
+              .filter((m) => m.src === 'DECK')[0],
+            0
+          )}
+        </Grid>
+      </Grid>
+    );
+    const marketCards = startups.state.market;
+    const marketMoves = startups
+      .moves()
+      .map((m) => m as DRAW_MOVE)
+      .filter((m) => m.src === 'MARKET');
+    const marketDrawMoves = (
+      <Grid container direction="row" justify="space-between">
+        {marketCards.map((card, i) => mapDrawMarketMove(card, marketMoves as any, i))}
+      </Grid>
+    );
     return (
       <div>
         <Typography>Draw</Typography>
-        <Grid container alignItems="center" justify="center">
-          <Grid item>
-            {mapDrawMove(
-              startups
-                .moves()
-                .map((m) => m as DRAW_MOVE)
-                .filter((m) => m.src === 'DECK')[0],
-              0
-            )}
-          </Grid>
-        </Grid>
-        <Grid container direction="row" justify="space-between">
-          {startups
-            .moves()
-            .map((m) => m as DRAW_MOVE)
-            .filter((m) => m.src === 'MARKET')
-            .map(mapDrawMove)}
-        </Grid>
+        {deckDrawMove}
+        {marketDrawMoves}
       </div>
     );
   };
@@ -192,7 +204,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
     startups.state.players.forEach((player) => player.field.forEach((c) => companiesCountMap[c.company.name]++));
     return (
       <Grid container spacing={1}>
-        {players.map((player, i) => {
+        {startups.state.players.map((player, i) => {
           return (
             <Grid item xs={6} key={'player' + i}>
               <Paper className={classes.paper}>
@@ -201,7 +213,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
               {player.nickName[0].toUpperCase()}
             </Avatar> */}
                   <Typography variant="h6" style={{ fontStyle: '' }}>
-                    {player.nickName}
+                    {(player.info as any).nickName}
                   </Typography>
                 </Box>
                 <hr />
