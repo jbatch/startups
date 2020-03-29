@@ -71,23 +71,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   const showHandButtonClicked = () => {
     setHandDrawerOpen(true);
   };
-  const handCard = [
-    {
-      name: 'Octocoffee',
-      symbol: 'O',
-      number: 8,
-    },
-    {
-      name: 'Octocoffee',
-      symbol: 'O',
-      number: 8,
-    },
-    {
-      name: 'Octocoffee',
-      symbol: 'O',
-      number: 8,
-    },
-  ];
+
   const hand = (
     <div>
       <Typography variant="h5" align="center">
@@ -101,7 +85,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
               return (
                 <PlayingCard
                   name={card.company.name}
-                  color="green"
+                  color={card.company.color}
                   number={card.company.number}
                   coins={0}
                   key={'hand' + i}
@@ -136,7 +120,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
             number={0}
             coins={0}
             height={150}
-            key={'draw-action-' + index}
+            key={'draw-deck-action-' + index}
           />
         );
       }
@@ -156,7 +140,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
               coins={0}
               height={150}
               onClick={() => handleActionClicked(move)}
-              key={'draw-action-' + index}
+              key={'draw-deck-action-' + index}
             />
           );
         case 'MARKET':
@@ -164,12 +148,12 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
           return (
             <PlayingCard
               name={card.company.name}
-              color="green"
+              color={card.company.color}
               number={card.company.number}
               coins={card.coins.length} // TODO (Update this to take in an array of coins instead of number)
               height={150}
               onClick={() => handleActionClicked(move)}
-              key={'draw-action-' + index}
+              key={'draw-market-action-' + index}
             />
           );
       }
@@ -188,14 +172,12 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
             )}
           </Grid>
         </Grid>
-        <Grid container>
-          <Grid item xs={4}>
-            {startups
-              .moves()
-              .map((m) => m as DRAW_MOVE)
-              .filter((m) => m.src === 'MARKET')
-              .map(mapDrawMove)}
-          </Grid>
+        <Grid container direction="row" justify="space-between">
+          {startups
+            .moves()
+            .map((m) => m as DRAW_MOVE)
+            .filter((m) => m.src === 'MARKET')
+            .map(mapDrawMove)}
         </Grid>
       </div>
     );

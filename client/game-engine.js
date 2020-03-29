@@ -18,28 +18,28 @@ const OCTO_COFFEE = {
   name: 'Octocoffee',
   symbol: 'O',
   number: 8,
-  color: 'blue',
+  color: 'brown',
 };
 
 const FLAMINGOSOFT = {
   name: 'Flamingosoft',
   symbol: 'F',
   number: 7,
-  color: 'yellow',
+  color: 'pink',
 };
 
 const BOW_WOW_GAMES = {
   name: 'Bow Wow Game',
   symbol: 'B',
   number: 6,
-  color: 'magenta',
+  color: 'blue',
 };
 
 const GIRAFFE_BEER = {
   name: 'Giraffe Beer',
   symbol: 'G',
   number: 5,
-  color: 'grey',
+  color: 'orange',
 };
 
 const companies = [ELEPHANT_MARS_TRAVEL, HIPPO_POWER_TECH, OCTO_COFFEE, FLAMINGOSOFT, BOW_WOW_GAMES, GIRAFFE_BEER];
