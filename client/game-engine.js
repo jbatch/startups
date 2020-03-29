@@ -4,36 +4,42 @@ const ELEPHANT_MARS_TRAVEL = {
   name: 'Elephant Mars Travel',
   symbol: 'E',
   number: 10,
+  color: 'red',
 };
 
 const HIPPO_POWER_TECH = {
   name: 'Hippo Power Tech',
   symbol: 'H',
   number: 9,
+  color: 'green',
 };
 
 const OCTO_COFFEE = {
   name: 'Octocoffee',
   symbol: 'O',
   number: 8,
+  color: 'blue',
 };
 
 const FLAMINGOSOFT = {
   name: 'Flamingosoft',
   symbol: 'F',
   number: 7,
+  color: 'yellow',
 };
 
 const BOW_WOW_GAMES = {
   name: 'Bow Wow Game',
   symbol: 'B',
   number: 6,
+  color: 'magenta',
 };
 
 const GIRAFFE_BEER = {
   name: 'Giraffe Beer',
   symbol: 'G',
   number: 5,
+  color: 'grey',
 };
 
 const companies = [ELEPHANT_MARS_TRAVEL, HIPPO_POWER_TECH, OCTO_COFFEE, FLAMINGOSOFT, BOW_WOW_GAMES, GIRAFFE_BEER];
@@ -381,4 +387,5 @@ function repeat(thingToRepeat, timesToRepeat) {
 
 module.exports = {
   Startups,
+  companies,
 };

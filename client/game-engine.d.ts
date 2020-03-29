@@ -32,6 +32,7 @@ export type Company = {
   name: string;
   symbol: string;
   number: number;
+  color: string;
 };
 
 export type State = {
@@ -80,3 +81,5 @@ export type Token = {
 export type Coin = {
   value: number;
 };
+
+export const companies: Array<Company>;
