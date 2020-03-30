@@ -9,6 +9,7 @@ export class Startups {
   currentPlayer(): Player;
   nextPlayer(): void;
   gameOver(): void;
+  nextGameOverStep(): void;
   dumpState(): string;
   loadState(state: string): void;
   move(move: Move): void;
@@ -51,6 +52,7 @@ export type GameResult = {
   companyResults: Array<CompanyResult>;
   winner: { player: number; score: number };
   tie?: Array<{ player: number; score: number }>;
+  gameOverStepIndex: number;
 };
 
 export type CompanyResult = {

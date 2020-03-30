@@ -269,7 +269,15 @@ class Startups {
       companyResults,
       winner,
       tie,
+      gameOverStepIndex: 0,
     };
+  }
+
+  nextGameOverStep() {
+    if (!this.state.results) {
+      return;
+    }
+    this.state.results.gameOverStepIndex++;
   }
 
   loadState(state) {

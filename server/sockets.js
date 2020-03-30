@@ -126,14 +126,23 @@ function configureSockets(appServer) {
         .emit('game-state', { roomCode: user.roomCode, players: usersInRoom, gameState: startups.dumpState() });
     }
 
-    async function nextGameOverStep({ step }) {
+    async function nextGameOverStep() {
       const user = await getUser(client.playerId);
       if (user.hostMode === null) {
         console.log('Ignoring nextGameOverStep request from non-host player ' + client.playerId);
         return;
       }
-      console.log(`Playing next game over step [${step}] for room: ${user.roomcode}`);
-      server.to(user.roomcode).emit('show-next-game-over-step', { step });
+      const usersInRoom = await getUsersInRoom(user.roomcode);
+      const room = await getRoom(user.roomcode);
+      const startups = new Startups({ state: room.gameState });
+      startups.nextGameOverStep();
+      await setGameStateForRoom(user.roomcode, startups.dumpState());
+      console.log(
+        `Playing next game over step [${startups.state.results.gameOverStepIndex}] for room: ${user.roomcode}`
+      );
+      server
+        .to(user.roomcode)
+        .emit('game-state', { roomCode: user.roomCode, players: usersInRoom, gameState: startups.dumpState() });
     }
   });
 
