@@ -30,6 +30,7 @@ function configureSockets(appServer) {
     client.on('all-players-ready', allPlayersReady);
     client.on('player-loaded-game', playerLoadedGame);
     client.on('player-move', playerMove);
+    client.on('next-game-over-step', nextGameOverStep);
 
     async function handshake({ id }) {
       let exists = false;
@@ -123,6 +124,16 @@ function configureSockets(appServer) {
       server
         .to(user.roomcode)
         .emit('game-state', { roomCode: user.roomCode, players: usersInRoom, gameState: startups.dumpState() });
+    }
+
+    async function nextGameOverStep({ step }) {
+      const user = await getUser(client.playerId);
+      if (user.hostMode === null) {
+        console.log('Ignoring nextGameOverStep request from non-host player ' + client.playerId);
+        return;
+      }
+      console.log(`Playing next game over step [${step}] for room: ${user.roomcode}`);
+      server.to(user.roomcode).emit('show-next-game-over-step', { step });
     }
   });
 
