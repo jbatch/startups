@@ -56,7 +56,7 @@ function configureSockets(appServer) {
         id,
         nickName: exists ? exists.nickname : null,
         roomCode: exists ? exists.roomcode : null,
-        hostMode: exists ? exists.hostMade : null,
+        hostMode: exists ? exists.hostMode : null,
         inGame,
       });
       if (exists && exists.nickname && exists.roomcode) {
@@ -85,11 +85,17 @@ function configureSockets(appServer) {
     }
 
     async function playerLeavesRoom({ roomCode }) {
+      const user = await getUser(client.playerId);
+      const wasHost = user.hostMode !== null;
+
       await removeRoomFromUser(client.playerId);
       const usersInRoom = await getUsersInRoom(roomCode);
       client.leave(roomCode);
       console.log('sending room status ', JSON.stringify({ roomCode, players: usersInRoom }));
       server.to(roomCode).emit('room-status', { roomCode, players: usersInRoom });
+      if (wasHost) {
+        server.to(roomCode).emit('host-disconnected');
+      }
       console.log(`Player ${client.playerId} left room ${roomCode}`);
     }
 
