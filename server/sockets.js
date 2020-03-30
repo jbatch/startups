@@ -31,6 +31,7 @@ function configureSockets(appServer) {
     client.on('player-loaded-game', playerLoadedGame);
     client.on('player-move', playerMove);
     client.on('next-game-over-step', nextGameOverStep);
+    client.on('restart-game', restartGame);
 
     async function handshake({ id }) {
       let exists = false;
@@ -143,6 +144,19 @@ function configureSockets(appServer) {
       server
         .to(user.roomcode)
         .emit('game-state', { roomCode: user.roomCode, players: usersInRoom, gameState: startups.dumpState() });
+    }
+
+    async function restartGame() {
+      const user = await getUser(client.playerId);
+      if (user.hostMode === null) {
+        console.log('Ignoring restartGame request from non-host player ' + client.playerId);
+        return;
+      }
+      const usersInRoom = await getUsersInRoom(user.roomcode);
+      const startups = new Startups({ players: shuffle(usersInRoom) });
+      await startGameForRoom(roomCode, startups.dumpState());
+      console.log(`Starting a new game in room ${roomCode}`);
+      server.to(roomCode).emit('restart-game', { players: usersInRoom, gameState: startups.dumpState() });
     }
   });
 
