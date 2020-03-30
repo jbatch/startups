@@ -21,26 +21,17 @@ type DeckProps = {
 export function Deck(props: DeckProps) {
   const { startups, playerId, handleActionClicked } = props;
   const isMyTurn = (startups.state.players[startups.state.turn].info as any).id === playerId;
-  if (!isMyTurn) {
-    return (
-      <Grid container alignItems="center" justify="center">
-        <Grid item>
-          <PlayingCard name={``} color="grey" number={0} coins={0} height={150} />
-        </Grid>
-      </Grid>
-    );
+
+  let cardText = 'Deck';
+  const drawMove = startups.moves().find((move) => move.action === 'DRAW' && move.src === 'DECK') as any;
+  if (isMyTurn && startups.state.step === 'DRAW') {
+    if (!drawMove) {
+      cardText = "Can't draw from deck";
+    } else {
+      cardText = drawMove.cost > 0 ? `Draw from deck (${drawMove.cost} coins)` : 'Draw from deck';
+    }
   }
-  const validMove: any = startups.moves().find((move) => move.action === 'DRAW' && move.src === 'DECK') as any;
-  if (!validMove) {
-    return (
-      <Grid container alignItems="center" justify="center">
-        <Grid item>
-          <PlayingCard name={"Can't draw from deck"} color="grey" number={0} coins={0} height={150} />
-        </Grid>
-      </Grid>
-    );
-  }
-  const cardText = validMove.cost > 0 ? `Draw from deck (${validMove.cost} coins)` : 'Draw from deck';
+
   return (
     <PlayingCard
       name={cardText}
@@ -48,7 +39,7 @@ export function Deck(props: DeckProps) {
       number={0}
       coins={0}
       height={150}
-      onClick={() => handleActionClicked(validMove as Move)}
+      onClick={() => handleActionClicked(drawMove as Move)}
     />
   );
 }
@@ -60,46 +51,36 @@ type MarketProps = {
 };
 
 export function Market(props: MarketProps) {
-  // const classes = useStyles();
   const { handleActionClicked, startups, playerId } = props;
-  const mapDrawMarketMove = (
-    card: MarketCard,
-    moves: Array<{ action: 'DRAW'; src: 'MARKET'; card: number }>,
-    index: number
-  ) => {
-    const move = moves.find((m) => m.card === index);
-    return (
-      <PlayingCard
-        name={card.company.name}
-        color={move ? card.company.color : 'grey'}
-        number={card.company.number}
-        coins={card.coins.length}
-        height={150}
-        onClick={move ? () => handleActionClicked(move) : undefined}
-        key={'draw-deck-action-' + index}
-      />
-    );
-  };
 
   const marketCards = startups.state.market;
   const marketMoves = startups
     .moves()
     .map((m) => m as DRAW_MOVE)
     .filter((m) => m.src === 'MARKET');
-  const marketDrawMoves = (
-    <Grid container direction="row" justify="space-between">
-      {marketCards.length === 0 && (
-        <Box>
-          <Typography>Market is empty</Typography>
-        </Box>
-      )}
-      {marketCards.map((card, i) => mapDrawMarketMove(card, marketMoves as any, i))}
-    </Grid>
-  );
+
+  const cardsToRender = marketCards.map((card, idx) => ({
+    card,
+    idx,
+    move: marketMoves.find((m: any) => m.card === idx),
+  }));
   return (
     <div>
       <Typography variant="h5">Market</Typography>
-      {marketDrawMoves}
+      <Grid container direction="row" justify="space-between">
+        {cardsToRender.length === 0 && <Typography>Market is empty</Typography>}
+        {cardsToRender.map(({ card, move, idx }) => (
+          <PlayingCard
+            name={card.company.name}
+            color={move ? card.company.color : 'grey'}
+            number={card.company.number}
+            coins={card.coins.length}
+            height={150}
+            onClick={move ? () => handleActionClicked(move) : undefined}
+            key={'draw-deck-action-' + idx}
+          />
+        ))}
+      </Grid>
     </div>
   );
 }

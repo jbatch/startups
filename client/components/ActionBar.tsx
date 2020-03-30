@@ -91,7 +91,7 @@ export default function ActionBar(props: ActionBarProps) {
           Show Hand
         </Button>
         <Button type="button" fullWidth variant="contained" color="primary" onClick={openPlayersDrawer}>
-          Show Players
+          Show Scores
         </Button>
       </Toolbar>
     </AppBar>

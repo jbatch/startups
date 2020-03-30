@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import SearchIcon from '@material-ui/icons/Search';
-import { Container, Typography, Button, Paper, Grid, Box, Avatar, Badge, AppBar, Toolbar } from '@material-ui/core';
+import { Container, Typography, Box } from '@material-ui/core';
 import { getSocket } from '../sockets';
-import { Startups, DRAW_MOVE, PLAY_MOVE, Move, companies, Company, Card, MarketCard } from '../game-engine';
-import PlayingCard from '../components/PlayingCard';
+import { Startups, Move } from '../game-engine';
 import ActionBar, { ActionBarDrawer, DrawerType } from '../components/ActionBar';
-import PlayerStatsComponent from '../components/PlayerStatsComponent';
 import { Deck, Market } from '../components/DeckAndMarket';
 
 const useStyles = makeStyles((theme) => ({
@@ -105,9 +101,6 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       </Typography>
 
       <Box mt={2} />
-
-      <Deck startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
-      <Box mt={2} />
       <Market startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
 
       <ActionBar openHandDrawer={openHandDrawer} openPlayersDrawer={openPlayersDrawer} />
@@ -123,8 +116,11 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   );
   const PlayingView = () => (
     <Container maxWidth="md">
-      <Deck startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
+      <Typography>
+        Play a card from your hand to your field or the <strong>Open Market™</strong>
+      </Typography>
       <Box mt={2} />
+
       <Market startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
 
       <ActionBar openHandDrawer={openHandDrawer} openPlayersDrawer={openPlayersDrawer} />
