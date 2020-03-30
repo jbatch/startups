@@ -101,6 +101,8 @@ export default function App() {
   const closeConfirmation = () => setConfirmationOpen(false);
 
   function onHomeButtonPressed(confirmed?: boolean) {
+    setRoomCode(null);
+    setHostRoomCode(null);
     if (curView === Views.JoinGameScreen) {
       if (hostRoomCode) setHostRoomCode(null);
       setCurView(Views.StartScreen);
