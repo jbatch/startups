@@ -104,7 +104,6 @@ export default function App() {
     setRoomCode(null);
     setHostRoomCode(null);
     if (curView === Views.JoinGameScreen) {
-      if (hostRoomCode) setHostRoomCode(null);
       setCurView(Views.StartScreen);
     }
     if (curView === Views.HostGameScreen) setCurView(Views.StartScreen);
@@ -112,7 +111,6 @@ export default function App() {
     if (curView === Views.LobbyScreen || curView === Views.PlayGameScreen) {
       if (confirmed) {
         socket.emit('player-leave-room', { roomCode });
-        if (hostRoomCode) setHostRoomCode(null);
         setCurView(Views.StartScreen);
       } else {
         setConfirmationOpen(true);

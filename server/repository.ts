@@ -1,8 +1,12 @@
-const Database = require('sqlite-async');
+import Database from 'sqlite-async';
 
 const db = Database.open('startups.sqlite');
 
-async function createInitialTables() {
+export type HostMode = 'Host' | 'Player' | null;
+export type UserRecord = { _id: number; id: string; nickName: string; roomCode: string; hostMode: HostMode };
+export type RoomRecord = { _id: number; roomCode: string; inGame: boolean; gameState: string };
+
+export async function createInitialTables(): Promise<void> {
   try {
     await (await db).exec(
       `CREATE TABLE IF NOT EXISTS rooms 
@@ -19,8 +23,8 @@ async function createInitialTables() {
       (
         _id INTEGER PRIMARY KEY AUTOINCREMENT, 
         id VARCHAR(255) UNIQUE, 
-        nickname VARCHAR(255), 
-        roomcode VARCHAR(5) REFERENCES rooms(id),
+        nickName VARCHAR(255), 
+        roomCode VARCHAR(5) REFERENCES rooms(id),
         hostMode VARCHAR(10)
       )`
     );
@@ -30,7 +34,7 @@ async function createInitialTables() {
   }
 }
 
-async function addUser(userId) {
+export async function addUser(userId): Promise<void> {
   try {
     return (await db).run('INSERT INTO users (id) VALUES (?)', [userId]);
   } catch (error) {
@@ -38,7 +42,7 @@ async function addUser(userId) {
   }
 }
 
-async function createRoom(roomId) {
+export async function createRoom(roomId): Promise<void> {
   try {
     return (await db).run('INSERT INTO rooms (roomCode) VALUES (?)', [roomId]);
   } catch (error) {
@@ -46,25 +50,30 @@ async function createRoom(roomId) {
   }
 }
 
-async function getUser(userId) {
+export async function getUser(userId): Promise<UserRecord> {
   try {
     return (await db).get('SELECT * FROM users where id = ?', [userId]);
   } catch (error) {
-    console.log('Error', err);
+    console.log('Error', error);
   }
 }
 
-async function getRoom(roomId) {
+export async function getRoom(roomId: string): Promise<RoomRecord> {
   try {
     return (await db).get('SELECT * FROM rooms where roomCode = ?', [roomId]);
   } catch (error) {
-    console.log('Error', err);
+    console.log('Error', error);
   }
 }
 
-async function addUserToRoom(roomCode, userId, nickName, hostMode) {
+export async function addUserToRoom(
+  roomCode: string,
+  userId: string,
+  nickName: string,
+  hostMode: HostMode
+): Promise<void> {
   try {
-    return (await db).run('UPDATE users set roomCode = ?, nickname = ?, hostMode = ? WHERE id = ?', [
+    return (await db).run('UPDATE users set roomCode = ?, nickName = ?, hostMode = ? WHERE id = ?', [
       roomCode,
       nickName,
       hostMode,
@@ -75,15 +84,15 @@ async function addUserToRoom(roomCode, userId, nickName, hostMode) {
   }
 }
 
-async function getUsersInRoom(roomCode) {
+export async function getUsersInRoom(roomCode: string): Promise<UserRecord> {
   try {
-    return (await db).all('SELECT id, nickname as nickName, hostMode FROM users WHERE roomCode = ?', [roomCode]);
+    return (await db).all('SELECT * FROM users WHERE roomCode = ?', [roomCode]);
   } catch (error) {
     console.log('Error ', error);
   }
 }
 
-async function removeRoomFromUser(userId) {
+export async function removeRoomFromUser(userId: string): Promise<void> {
   try {
     return (await db).run('UPDATE users set roomCode = null, hostMode = null WHERE id = ?', [userId]);
   } catch (error) {
@@ -91,7 +100,7 @@ async function removeRoomFromUser(userId) {
   }
 }
 
-async function startGameForRoom(roomCode, gameState) {
+export async function startGameForRoom(roomCode: string, gameState: string): Promise<void> {
   try {
     return (await db).run('UPDATE rooms set inGame = True, gameState = ? WHERE roomCode = ?', [gameState, roomCode]);
   } catch (error) {
@@ -99,23 +108,10 @@ async function startGameForRoom(roomCode, gameState) {
   }
 }
 
-async function setGameStateForRoom(roomCode, gameState) {
+export async function setGameStateForRoom(roomCode: string, gameState: string): Promise<void> {
   try {
     return (await db).run('UPDATE rooms set gameState = ? WHERE roomCode = ?', [gameState, roomCode]);
   } catch (error) {
     console.log('Error ', error);
   }
 }
-
-module.exports = {
-  createInitialTables,
-  addUser,
-  getUser,
-  createRoom,
-  getRoom,
-  addUserToRoom,
-  getUsersInRoom,
-  removeRoomFromUser,
-  startGameForRoom,
-  setGameStateForRoom,
-};

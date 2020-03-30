@@ -1,10 +1,10 @@
-const express = require('express');
-const http = require('http');
-const path = require('path');
+import express from 'express';
+import http from 'http';
+import path from 'path';
 
-const { routes } = require('./routes');
-const { configureSockets } = require('./sockets');
-const { createInitialTables } = require('./repository');
+import { routes } from './routes';
+import { configureSockets } from './sockets';
+import { createInitialTables } from './repository';
 
 const app = express();
 const server = http.createServer(app);
@@ -14,9 +14,6 @@ configureSockets(server);
 
 // If not matched anything yet server from dist
 app.use(express.static(path.join(__dirname, '..', 'dist')));
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
-// });
 
 async function main() {
   await createInitialTables();

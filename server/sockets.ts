@@ -1,9 +1,9 @@
-const socketIo = require('socket.io');
-const { v4: uuid } = require('uuid');
-const randomstring = require('randomstring');
-var isEqual = require('lodash.isequal');
+import socketIo from 'socket.io';
+import { v4 as uuid } from 'uuid';
+import randomstring from 'randomstring';
+import isEqual from 'lodash.isequal';
 
-const {
+import {
   addUser,
   getUser,
   createRoom,
@@ -13,15 +13,15 @@ const {
   removeRoomFromUser,
   startGameForRoom,
   setGameStateForRoom,
-} = require('./repository');
+  UserRecord,
+  HostMode,
+} from './repository';
+import { Startups } from '../client/game-engine';
 
-const { Startups } = require('../client/game-engine');
-
-function configureSockets(appServer) {
+export function configureSockets(appServer) {
   const server = socketIo(appServer);
 
-  server.on('connection', (client) => {
-    client.data = {};
+  server.on('connection', (client: socketIo.Socket & { playerId }) => {
     client.on('handshake', handshake);
     client.on('disconnect', disconnect);
     client.on('create-room', createNewRoom);
@@ -35,7 +35,7 @@ function configureSockets(appServer) {
     client.on('request-game-state', requestGameState);
 
     async function handshake({ id }) {
-      let exists = false;
+      let exists: UserRecord = null;
       let inGame = false;
       if (id) {
         exists = await getUser(id);
@@ -45,22 +45,22 @@ function configureSockets(appServer) {
         await addUser(id);
         console.log(`New client, assigning id [${id}]`);
       } else {
-        console.log(`Player ${id} reconnected with nickname ${exists.nickname} and room ${exists.roomcode}.`);
-        if (exists.roomcode) {
-          inGame = (await getRoom(exists.roomcode)).inGame;
+        console.log(`Player ${id} reconnected with nickname ${exists.nickName} and room ${exists.roomCode}.`);
+        if (exists.roomCode) {
+          inGame = (await getRoom(exists.roomCode)).inGame;
           console.log(`${id} in game? : ${JSON.stringify(inGame)}`);
         }
       }
       client.playerId = id;
       client.emit('welcome', {
         id,
-        nickName: exists ? exists.nickname : null,
-        roomCode: exists ? exists.roomcode : null,
+        nickName: exists ? exists.nickName : null,
+        roomCode: exists ? exists.roomCode : null,
         hostMode: exists ? exists.hostMode : null,
         inGame,
       });
-      if (exists && exists.nickname && exists.roomcode) {
-        await playerJoinsRoom({ roomCode: exists.roomcode, nickName: exists.nickname });
+      if (exists && exists.nickName && exists.roomCode) {
+        await playerJoinsRoom({ roomCode: exists.roomCode, nickName: exists.nickName, hostMode: exists.hostMode });
       }
     }
 
@@ -75,7 +75,15 @@ function configureSockets(appServer) {
       client.emit('room-created', { roomCode });
     }
 
-    async function playerJoinsRoom({ roomCode, nickName, hostMode }) {
+    async function playerJoinsRoom({
+      roomCode,
+      nickName,
+      hostMode,
+    }: {
+      roomCode: string;
+      nickName: string;
+      hostMode: HostMode;
+    }) {
       await addUserToRoom(roomCode, client.playerId, nickName, hostMode);
       const usersInRoom = await getUsersInRoom(roomCode);
       client.join(roomCode);
@@ -109,8 +117,8 @@ function configureSockets(appServer) {
 
     async function playerLoadedGame() {
       const user = await getUser(client.playerId);
-      const usersInRoom = await getUsersInRoom(user.roomcode);
-      const room = await getRoom(user.roomcode);
+      const usersInRoom = await getUsersInRoom(user.roomCode);
+      const room = await getRoom(user.roomCode);
       // Only send once to each client
       console.log('Sending game-state to' + JSON.stringify({ user, roomCode: user.roomCode }));
       client.emit('game-state', { roomCode: user.roomCode, players: usersInRoom, gameState: room.gameState });
@@ -119,18 +127,18 @@ function configureSockets(appServer) {
     async function playerMove({ move }) {
       console.log(`${client.playerId} trying to do move ${JSON.stringify(move)}`);
       const user = await getUser(client.playerId);
-      const usersInRoom = await getUsersInRoom(user.roomcode);
-      const room = await getRoom(user.roomcode);
+      const usersInRoom = await getUsersInRoom(user.roomCode);
+      const room = await getRoom(user.roomCode);
       const startups = new Startups({ state: room.gameState });
       const validMove = startups.moves().find((m) => isEqual(m, move));
       console.log('Valid move ', validMove);
       console.log('Valid moves ', startups.moves());
       if (validMove) {
         startups.move(move);
-        await setGameStateForRoom(user.roomcode, startups.dumpState());
+        await setGameStateForRoom(user.roomCode, startups.dumpState());
       }
       server
-        .to(user.roomcode)
+        .to(user.roomCode)
         .emit('game-state', { roomCode: user.roomCode, players: usersInRoom, gameState: startups.dumpState() });
     }
 
@@ -140,16 +148,16 @@ function configureSockets(appServer) {
         console.log('Ignoring nextGameOverStep request from non-host player ' + client.playerId);
         return;
       }
-      const usersInRoom = await getUsersInRoom(user.roomcode);
-      const room = await getRoom(user.roomcode);
+      const usersInRoom = await getUsersInRoom(user.roomCode);
+      const room = await getRoom(user.roomCode);
       const startups = new Startups({ state: room.gameState });
       startups.nextGameOverStep();
-      await setGameStateForRoom(user.roomcode, startups.dumpState());
+      await setGameStateForRoom(user.roomCode, startups.dumpState());
       console.log(
-        `Playing next game over step [${startups.state.results.gameOverStepIndex}] for room: ${user.roomcode}`
+        `Playing next game over step [${startups.state.results.gameOverStepIndex}] for room: ${user.roomCode}`
       );
       server
-        .to(user.roomcode)
+        .to(user.roomCode)
         .emit('game-state', { roomCode: user.roomCode, players: usersInRoom, gameState: startups.dumpState() });
     }
 
@@ -159,17 +167,17 @@ function configureSockets(appServer) {
         console.log('Ignoring restartGame request from non-host player ' + client.playerId);
         return;
       }
-      const usersInRoom = await getUsersInRoom(user.roomcode);
+      const usersInRoom = await getUsersInRoom(user.roomCode);
       const startups = new Startups({ players: shuffle(usersInRoom) });
-      await setGameStateForRoom(user.roomcode, startups.dumpState());
-      console.log(`Starting a new game in room ${roomCode}`);
-      server.to(roomCode).emit('restart-game', { players: usersInRoom, gameState: startups.dumpState() });
+      await setGameStateForRoom(user.roomCode, startups.dumpState());
+      console.log(`Starting a new game in room ${user.roomCode}`);
+      server.to(user.roomCode).emit('restart-game', { players: usersInRoom, gameState: startups.dumpState() });
     }
 
     async function requestGameState() {
       const user = await getUser(client.playerId);
-      const usersInRoom = await getUsersInRoom(user.roomcode);
-      const room = await getRoom(user.roomcode);
+      const usersInRoom = await getUsersInRoom(user.roomCode);
+      const room = await getRoom(user.roomCode);
       const startups = new Startups({ state: room.gameState });
       console.log(`Sending state to player: ${client.playerId}`);
       client.send('game-state', { roomCode: user.roomCode, players: usersInRoom, gameState: startups.dumpState() });
@@ -189,7 +197,3 @@ function configureSockets(appServer) {
     return array;
   }
 }
-
-module.exports = {
-  configureSockets,
-};
