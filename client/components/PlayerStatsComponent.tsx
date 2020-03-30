@@ -43,12 +43,13 @@ export default function PlayerStats(props: PlayerStatsProps) {
           <Box mr={2} ml={2} minWidth="200px" key={'player-stats-' + i}>
             <Paper className={classes.paper}>
               <Box display="flex" flexDirection="row" alignItems="center">
-                {/* <Avatar alt={player.nickName} className={classes.small}>
-                  {player.nickName[0].toUpperCase()}
-                </Avatar> */}
                 <Typography variant="h6" style={{ fontStyle: '' }}>
                   {(player.info as any).nickName}
                 </Typography>
+                <Box display="flex" alignItems="center" ml="auto">
+                  <img src={process.env.BASE_URL + '/coin.png'} style={{ height: '30px', width: '30px' }}></img>
+                  <Typography>{player.coins.length}</Typography>
+                </Box>
               </Box>
               <hr />
               <Box>
@@ -60,15 +61,14 @@ export default function PlayerStats(props: PlayerStatsProps) {
                       ? 0
                       : (count / companiesCountMap[company.name]) * 100;
                   const isMonopoly = startups.playerHasMonopolyToken(i, company);
+
                   return (
                     <Box display="flex" key={'company-bar-' + ii}>
                       <Badge
-                        badgeContent={
-                          isMonopoly ? (
-                            <img src={process.env.BASE_URL + '/crown2.png'} className={classes.xsmall} />
-                          ) : null
-                        }
+                        badgeContent={isMonopoly ? 'M' : 0}
                         anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+                        variant="dot"
+                        color="error"
                       >
                         <Avatar alt={company.name} color={company.color} className={classes.small}>
                           {company.symbol}
