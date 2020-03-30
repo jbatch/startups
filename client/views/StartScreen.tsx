@@ -25,13 +25,17 @@ export default function StartScreen(props: StartScreenProps) {
     <Container maxWidth="lg" style={{ justifyContent: 'center' }}>
       <Paper className={classes.paper}>
         <Typography>
-          Startups is an online multiplayer game where you and your friends compete to gain monopoly control of one of 5
+          Startups is an online multiplayer game where you and your friends compete to gain monopoly control of one of 6
           startups
         </Typography>
+        <Box mt={1} />
         <Typography>
-          Lorem ipsum flavor text, Lorem ipsum flavor text, Lorem ipsum flavor text, Lorem ipsum flavor text, Lorem
-          ipsum flavor text
+          The aim of the game is to make money and you make money by being the biggest investor in companies, but be
+          careful! The <i>"Free Market™"</i> will enforce monopoly controls on you to{' '}
+          <i>"provide an even playing field"</i> to other players.
         </Typography>
+        <Box mt={1} />
+        <Typography>See the instructions for more information</Typography>
       </Paper>
       <Box mt={3}>
         <Grid container justify="space-evenly">
