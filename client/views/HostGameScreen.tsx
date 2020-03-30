@@ -8,6 +8,7 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(3),
   },
+  card: { display: 'flex', alignItems: 'center', flexDirection: 'column' },
 }));
 
 type HostGameScreenProps = {
@@ -40,13 +41,19 @@ export default function HostGameScreen(props: HostGameScreenProps) {
         <Typography>Are you using this device to play the game as well, or just to host?</Typography>
       </Paper>
       <Box m={4}>
-        <Card onClick={setHostModeHost} style={{ display: 'flex', justifyContent: 'center' }}>
+        <Card onClick={setHostModeHost} className={classes.card}>
           <img src={process.env.BASE_URL + '/HostMode.png'} style={{ width: '65%' }}></img>
+          <Box p={1}>
+            <Typography align="center">Hosting only</Typography>
+          </Box>
         </Card>
       </Box>
       <Box m={4}>
-        <Card onClick={setHostModePlayer} style={{ display: 'flex', justifyContent: 'center' }}>
+        <Card onClick={setHostModePlayer} className={classes.card}>
           <img src={process.env.BASE_URL + '/PlayerMode.png'} style={{ width: '65%' }}></img>
+          <Box p={1}>
+            <Typography align="center">Playing as well</Typography>
+          </Box>
         </Card>
       </Box>
     </Container>
