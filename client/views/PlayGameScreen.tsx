@@ -34,13 +34,10 @@ type Player = {
 
 export default function PlayGameScreen(props: PlayGameScreenProps) {
   const { playerId } = props;
-  const [handDrawerOpen, setHandDrawerOpen] = useState<boolean>(false);
   const [players, setPlayers] = useState<Array<Player>>([]);
   const [startups, setStartups] = useState<Startups>(null);
-  const [handOpen, setHandOpen] = useState<boolean>(false);
   const [openDrawerName, setOpenDrawerName] = useState<DrawerType>(null);
 
-  const classes = useStyles();
   const socket = getSocket();
 
   const closeDrawer = () => setOpenDrawerName(null);
@@ -59,6 +56,13 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
         (window as any).startups = s;
         console.log(s);
         setStartups(s);
+
+        const isMyTurn = (s.state.players[s.state.turn].info as any).id === playerId;
+        if (isMyTurn && s.state.step === 'PLAY') {
+          openHandDrawer();
+        } else {
+          closeDrawer();
+        }
       }
     );
     socket.emit('player-loaded-game');
