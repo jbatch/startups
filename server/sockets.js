@@ -32,6 +32,7 @@ function configureSockets(appServer) {
     client.on('player-move', playerMove);
     client.on('next-game-over-step', nextGameOverStep);
     client.on('restart-game', restartGame);
+    client.on('request-game-state', requestGameState);
 
     async function handshake({ id }) {
       let exists = false;
@@ -154,9 +155,18 @@ function configureSockets(appServer) {
       }
       const usersInRoom = await getUsersInRoom(user.roomcode);
       const startups = new Startups({ players: shuffle(usersInRoom) });
-      await startGameForRoom(roomCode, startups.dumpState());
+      await setGameStateForRoom(user.roomcode, startups.dumpState());
       console.log(`Starting a new game in room ${roomCode}`);
       server.to(roomCode).emit('restart-game', { players: usersInRoom, gameState: startups.dumpState() });
+    }
+
+    async function requestGameState() {
+      const user = await getUser(client.playerId);
+      const usersInRoom = await getUsersInRoom(user.roomcode);
+      const room = await getRoom(user.roomcode);
+      const startups = new Startups({ state: room.gameState });
+      console.log(`Sending state to player: ${client.playerId}`);
+      client.send('game-state', { roomCode: user.roomCode, players: usersInRoom, gameState: startups.dumpState() });
     }
   });
 
