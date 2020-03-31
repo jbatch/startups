@@ -205,7 +205,7 @@ class Startups {
           maxCountIndex = null;
         }
       });
-      if (maxCountIndex) {
+      if (maxCountIndex !== null) {
         companyResults.push({
           company,
           monopolyPlayer: maxCountIndex,
