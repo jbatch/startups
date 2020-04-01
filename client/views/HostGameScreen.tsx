@@ -36,7 +36,7 @@ export default function HostGameScreen(props: HostGameScreenProps) {
   const setHostModePlayer = () => onHostModeChange('Player');
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="sm">
       <Paper className={classes.paper}>
         <Typography>Are you using this device to play the game as well, or just to host?</Typography>
       </Paper>

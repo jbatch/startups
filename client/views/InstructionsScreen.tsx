@@ -140,7 +140,7 @@ export default function InstructionsScreen(props: InstructionsScreenProps) {
   }
   const nextButtonText = page !== pages.length - 1 ? 'Next' : 'Done';
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="sm">
       {pages[page]}
       <Grid container justify="space-between">
         {page !== 0 && (

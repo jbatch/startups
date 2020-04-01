@@ -50,7 +50,7 @@ export default function LobbyScreen(props: LobbyScreenProps) {
   };
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="sm">
       <Typography variant="h5" align="center">
         Room Code: {roomCode}
       </Typography>

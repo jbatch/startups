@@ -22,7 +22,7 @@ export default function StartScreen(props: StartScreenProps) {
   const setViewJoinGame = () => setCurView(Views.JoinGameScreen);
 
   return (
-    <Container maxWidth="lg" style={{ justifyContent: 'center' }}>
+    <Container maxWidth="sm" style={{ justifyContent: 'center' }}>
       <Paper className={classes.paper}>
         <Typography>
           Startups is an online multiplayer game where you and your friends compete to gain monopoly control of one of 6

@@ -81,7 +81,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
 
   const DrawingView = () => {
     return (
-      <div>
+      <Container maxWidth="sm">
         <Typography variant="h6">It's your turn to draw a card!</Typography>
         <Deck startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
         <Box mt={2} />
@@ -95,12 +95,12 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
           onClose={closeDrawer}
           handleCardClickedFromHand={null}
         />
-      </div>
+      </Container>
     );
   };
 
   const WaitingView = ({ curPlayer }: { curPlayer: string }) => (
-    <Container maxWidth="md">
+    <Container maxWidth="sm">
       <Typography variant="h5">
         Waiting for <strong>{curPlayer}</strong>...
       </Typography>
@@ -120,7 +120,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
     </Container>
   );
   const PlayingView = () => (
-    <Container maxWidth="md">
+    <Container maxWidth="sm">
       <Typography>
         Play a card from your hand to your field or the <strong>Open Market™</strong>
       </Typography>

@@ -17,7 +17,7 @@ export default function LobbyScreen(props: LobbyScreenProps) {
   // const classes = useStyles()
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="sm">
       <Typography variant="h5" align="center">
         Responsive Card
       </Typography>

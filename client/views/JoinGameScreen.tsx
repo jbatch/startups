@@ -46,7 +46,7 @@ export default function JoinGameScreen(props: JoinGameScreenProps) {
   const roomCodeVal = hostRoomCode || roomCode;
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="sm">
       <form className={classes.form} noValidate onSubmit={onSubmit}>
         <TextField
           variant="outlined"
