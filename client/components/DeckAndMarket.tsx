@@ -52,6 +52,7 @@ type MarketProps = {
 
 export function Market(props: MarketProps) {
   const { handleActionClicked, startups, playerId } = props;
+  const isPlayerTurn = (startups.state.players[startups.state.turn].info as any).id === playerId;
 
   const marketCards = startups.state.market;
   const marketMoves = startups
@@ -72,7 +73,7 @@ export function Market(props: MarketProps) {
         {cardsToRender.map(({ card, move, idx }) => (
           <PlayingCard
             name={card.company.name}
-            color={move ? card.company.color : 'grey'}
+            color={move || !isPlayerTurn ? card.company.color : 'grey'}
             number={card.company.number}
             coins={card.coins.length}
             height={150}

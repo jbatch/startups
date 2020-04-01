@@ -50,9 +50,18 @@ export default function PlayingCard(props: PlayingCardProps) {
   const boxPadding = `${height * 0.05}px`;
   const coinSize = `${height * 0.15}px`;
 
+  const disabledStyles = color === 'grey' ? { filter: 'grayscale(1)' } : {};
+
   return (
     <Card
-      style={{ height: heightStr, width: widthStr, display: 'flex', marginTop: '10px', userSelect: 'none' }}
+      style={{
+        height: heightStr,
+        width: widthStr,
+        display: 'flex',
+        marginTop: '10px',
+        userSelect: 'none',
+        ...disabledStyles,
+      }}
       onClick={onClick}
     >
       <Grid container direction="column">
