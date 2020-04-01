@@ -46,6 +46,7 @@ export type State = {
   step: 'DRAW' | 'PLAY' | 'GAME_OVER';
   lastDrawnCompany: Company | null;
   results: GameResult | null;
+  playersPreGameOver: Array<Player>;
 };
 
 export type GameResult = {

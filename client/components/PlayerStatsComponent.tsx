@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Paper, Card, Box, Typography, Grid, Avatar, Button, Badge, GridList } from '@material-ui/core';
 import { getSocket } from '../sockets';
-import { Startups, Company } from 'client/game-engine';
+import { Startups, Company } from '..//game-engine';
 import Bar from './Bar';
 
 const useStyles = makeStyles((theme) => ({

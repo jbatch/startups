@@ -5,6 +5,7 @@ import { getSocket } from '../sockets';
 import { Startups, Move } from '../game-engine';
 import ActionBar, { ActionBarDrawer, DrawerType } from '../components/ActionBar';
 import { Deck, Market } from '../components/DeckAndMarket';
+import GameOverView from '../components/GameOverView';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -138,25 +139,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       />
     </Container>
   );
-  const GameOverView = () => {
-    const winner = startups.state.players[startups.state.results.winner.player];
-    const winnerName = (winner as any).info.nickName;
-    const winnerPoints = startups.state.results.winner.score;
-    return (
-      <Container>
-        <Typography variant="h2" align="center">
-          And the winner is...
-        </Typography>
-        <Box mt={3} />
-        <Typography variant="h2" align="center">
-          {winnerName}!!
-        </Typography>
-        <Typography variant="h3" align="center">
-          {winnerPoints}!!
-        </Typography>
-      </Container>
-    );
-  };
+
   const LoadingView = () => <div>Loading...</div>;
 
   const loading = !startups;
@@ -167,7 +150,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   const curPlayerName = (curPlayerTurn.info as any).nickName;
   const isMyTurn = (curPlayerTurn.info as any).id === playerId;
 
-  if (phase === 'GAME_OVER') return <GameOverView />;
+  if (phase === 'GAME_OVER') return <GameOverView startups={startups} playerId={playerId} />;
   if (!isMyTurn) return <WaitingView curPlayer={curPlayerName} />;
   if (phase === 'DRAW') return <DrawingView />;
   if (phase === 'PLAY') return <PlayingView />;
