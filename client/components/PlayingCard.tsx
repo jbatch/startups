@@ -8,28 +8,6 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(3),
     paddingRight: theme.spacing(3),
   },
-  badge: {
-    height: '20px',
-    display: 'flex',
-    padding: '0 6px',
-    'z-index': '1',
-    position: 'absolute',
-    'flex-wrap': 'wrap',
-    'font-size': '0.75rem',
-    'min-width': '20px',
-    'box-sizing': 'border-box',
-    transition: 'transform 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-    'align-items': 'center',
-    'font-family': '"Roboto", "Helvetica", "Arial", sans-serif',
-    'font-weight': '500',
-    'line-height': '1',
-    'align-content': 'center',
-    'border-radius': '10px',
-    'flex-direction': 'row',
-    'justify-content': 'center',
-    color: '#fff',
-    'background-color': '#f50057',
-  },
 }));
 
 type PlayingCardProps = {
@@ -73,7 +51,7 @@ export default function PlayingCard(props: PlayingCardProps) {
           paddingRight={boxPadding}
           style={{ backgroundColor: color, minHeight: topBarHeight }}
         >
-          {number > 0 && <div className={classes.badge}>{number}</div>}
+          {number > 0 && <div style={{ fontSize: '1rem', color: 'white', fontWeight: 500 }}>{number}</div>}
         </Box>
         <Box
           display="flex"
