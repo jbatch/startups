@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 'larger',
   },
   paper: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
   },
   coin: {
     height: theme.spacing(5),
@@ -34,15 +34,16 @@ export default function GameOverView(props: GameOverViewProps) {
   const { startups, playerId } = props;
   const classes = useStyles();
 
-  // const gameOverStep = results.gameOverStepIndex;
+  const socket = getSocket();
 
   const onNextClicked = () => {
-    // socket.emit('next-game-over-step');
-    setGameOverStep(gameOverStep + 1);
+    socket.emit('next-game-over-step');
+    // setGameOverStep(gameOverStep + 1);
   };
 
-  const [gameOverStep, setGameOverStep] = useState<number>(0);
+  // const [gameOverStep, setGameOverStep] = useState<number>(0);
   const results = startups.state.results;
+  const gameOverStep = results.gameOverStepIndex;
   const winner = startups.state.players[results.winner.player];
   const winnerName = (winner as any).info.nickName;
   const host: any = startups.state.players.find((player: any) => player.info.hostMode !== null);
@@ -54,9 +55,9 @@ export default function GameOverView(props: GameOverViewProps) {
   const stepsPerCompany = 5;
   const showPlayers = gameOverStep >= 1;
   const showCompanies = gameOverStep >= 2;
-  const showMonopoly = (gameOverStep - startingSteps) % stepsPerCompany >= 1;
-  const showShareHolders = (gameOverStep - startingSteps) % stepsPerCompany >= 2;
-  const showUpdatedScore = (gameOverStep - startingSteps) % stepsPerCompany >= 3;
+  const showShareHolders = (gameOverStep - startingSteps) % stepsPerCompany >= 1;
+  const showMonopoly = (gameOverStep - startingSteps) % stepsPerCompany >= 2;
+  // const showUpdatedScore = (gameOverStep - startingSteps) % stepsPerCompany >= 3;
   const rehideCompany = (gameOverStep - startingSteps) % stepsPerCompany >= 4;
 
   const companyIndex = Math.min(
@@ -76,6 +77,13 @@ export default function GameOverView(props: GameOverViewProps) {
       ((gameOverStep - startingSteps) % stepsPerCompany >= 3 ? 1 : 0),
     0
   );
+
+  const monopolyGainedThisCompany = (startups.state.results.companyResults[companyIndex].owedCoins || []).reduce(
+    (cur, next) => cur + next.count * 3,
+    0
+  );
+  const payedThisCompany = startups.state.results.companyResults[companyIndex].owedCoins || [];
+
   const playerScores = startups.state.playersPreGameOver.map((player, playerIdx) => {
     const receieved = startups.state.results.companyResults
       // remove results that havent been tallied up yet
@@ -118,7 +126,7 @@ export default function GameOverView(props: GameOverViewProps) {
                       <Box
                         flexDirection="column"
                         display="flex"
-                        p={2}
+                        p={0}
                         justifyContent="center"
                         alignItems="center"
                         key={'p-' + idx}
@@ -150,25 +158,32 @@ export default function GameOverView(props: GameOverViewProps) {
                 <Typography variant="h5">{companyInfo.name}</Typography>
               </Box>
               <Box mt={4} style={{ borderTop: '1px solid black' }} />
-              {showMonopoly && (
-                <Box mt={2} display="flex" alignItems="center">
-                  <Typography variant="h6">Monopoly: {(majorityShareholder.info as any).nickName}</Typography>
-                </Box>
-              )}
               {showShareHolders && (
                 <Box mt={2} display="flex" flexDirection="column">
                   <Typography variant="h6">Shareholders:</Typography>
                   <Box ml={4} display="flex" flexDirection="column">
-                    {shareholders.map((shareholder) => {
+                    {shareholders.map((shareholder, idx) => {
                       const player = players[shareholder.player];
                       return (
-                        <Box display="flex" alignItems="center">
-                          <Typography variant="h6">{(player.info as any).nickName} pays</Typography>
+                        <Box display="flex" alignItems="center" key={'share-' + idx} style={{ color: 'red' }}>
+                          <Typography variant="h6">{(player.info as any).nickName} loses: </Typography>
                           <img src={process.env.BASE_URL + '/coin.png'} className={classes.coin}></img>
-                          <Typography variant="h6">{shareholder.count * 3}</Typography>
+                          <Typography variant="h6">{shareholder.count}</Typography>
                         </Box>
                       );
                     })}
+                  </Box>
+                </Box>
+              )}
+              {showMonopoly && (
+                <Box mt={2} display="flex" flexDirection="column">
+                  <Typography variant="h6">Monopoly:</Typography>
+                  <Box ml={4} display="flex" flexDirection="column">
+                    <Box display="flex" alignItems="center" style={{ color: 'green' }}>
+                      <Typography variant="h6">{(majorityShareholder.info as any).nickName} gains</Typography>
+                      <img src={process.env.BASE_URL + '/coin.png'} className={classes.coin}></img>
+                      <Typography variant="h6">{monopolyGainedThisCompany}</Typography>
+                    </Box>
                   </Box>
                 </Box>
               )}
