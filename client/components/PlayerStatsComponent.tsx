@@ -63,14 +63,14 @@ export default function PlayerStats(props: PlayerStatsProps) {
                   const isMonopoly = startups.playerHasMonopolyToken(i, company);
 
                   return (
-                    <Box display="flex" key={'company-bar-' + ii}>
+                    <Box display="flex" alignItems="" key={'company-bar-' + ii}>
                       <Badge
                         badgeContent={isMonopoly ? 'M' : 0}
                         anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
                         variant="dot"
                         color="error"
                       >
-                        <Avatar alt={company.name} color={company.color} className={classes.small}>
+                        <Avatar alt={company.name} style={{ backgroundColor: company.color }} className={classes.small}>
                           {company.symbol}
                         </Avatar>
                       </Badge>
