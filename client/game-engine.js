@@ -220,7 +220,7 @@ class Startups {
 
     // Update player coins based on results. Each coin transferred is now worth 3.
     companyResults.forEach((result) => {
-      if (result.monopolyPlayer && result.owedCoins) {
+      if (result.monopolyPlayer !== null && result.owedCoins) {
         result.owedCoins.forEach((o) => {
           console.log(`Player ${o.player} paying ${o.count} to player ${result.monopolyPlayer}. O: ${o}`);
           const coins = this.state.players[o.player].coins.splice(0, o.count).map((c) => ({ value: 3 }));
