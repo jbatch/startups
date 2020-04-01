@@ -6,6 +6,7 @@ import { Startups, Move } from '../game-engine';
 import ActionBar, { ActionBarDrawer, DrawerType } from '../components/ActionBar';
 import { Deck, Market } from '../components/DeckAndMarket';
 import GameOverView from '../components/GameOverView';
+import { ClickableCard } from '../components/ClickableCard';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -38,6 +39,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   const [players, setPlayers] = useState<Array<Player>>([]);
   const [startups, setStartups] = useState<Startups>(null);
   const [openDrawerName, setOpenDrawerName] = useState<DrawerType>(null);
+  const [flipDeck, setFlipDeck] = useState<boolean>(false);
 
   const socket = getSocket();
 
@@ -76,14 +78,25 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
 
   const handleActionClicked = (move: Move) => {
     console.log('Action clicked: ', move);
-    socket.emit('player-move', { move });
+    if (move.action === 'DRAW' && move.src === 'DECK') {
+      setFlipDeck(true);
+      setTimeout(() => {
+        socket.emit('player-move', { move });
+        setFlipDeck(false);
+      }, 1000);
+    } else {
+      socket.emit('player-move', { move });
+      setFlipDeck(false);
+    }
   };
 
   const DrawingView = () => {
+    const topOfDeck = startups.state.deck[0];
     return (
       <Container maxWidth="sm">
         <Typography variant="h6">It's your turn to draw a card!</Typography>
-        <Deck startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
+        {!flipDeck && <Deck startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />}
+        {flipDeck && <ClickableCard card={topOfDeck} moves={[]} onMoveSelected={() => {}} />}
         <Box mt={2} />
         <Market startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
         <ActionBar openHandDrawer={openHandDrawer} openPlayersDrawer={openPlayersDrawer} />
