@@ -30,10 +30,16 @@ import { initialiseSocket } from './sockets';
 
 const useStyles = makeStyles((theme) => ({
   main: {
+    display: 'flex',
     flexGrow: 1,
+    border: '3px solid green',
     padding: theme.spacing(3),
+    marginTop: theme.mixins.toolbar.minHeight,
   },
-  appBarSpacer: theme.mixins.toolbar,
+  appConainer: {
+    height: '100%',
+    display: 'flex',
+  },
 }));
 
 function shouldShowHomeButton(curView: Views) {
@@ -146,7 +152,7 @@ export default function App() {
   };
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div className={classes.appConainer}>
       <CssBaseline />
       <AppBar position="fixed">
         <Toolbar>
@@ -163,7 +169,6 @@ export default function App() {
         </Toolbar>
       </AppBar>
       <main className={classes.main}>
-        <div className={classes.appBarSpacer} />
         {curView === Views.StartScreen && (
           <StartScreen setCurView={setCurView} onInstructionsClick={onInstructionsClick} />
         )}

@@ -176,6 +176,9 @@ class Startups {
     this.state.step = 'GAME_OVER';
     console.log(this.state.step);
 
+    // Take a copy of the players current state for use in game over animations
+    this.state.playersPreGameOver = JSON.parse(JSON.stringify(this.state.players));
+
     // All players play their hands onto their field
     this.state.players.forEach((player) => {
       const cards = player.hand.splice(0, player.hand.length);
