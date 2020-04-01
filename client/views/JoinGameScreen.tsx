@@ -27,7 +27,8 @@ export default function JoinGameScreen(props: JoinGameScreenProps) {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Todo: add error messages and invalid input checks
-    onJoinGame(nickName, hostRoomCode || roomCode);
+    const actualRoomCode = hostRoomCode || roomCode;
+    onJoinGame(nickName, actualRoomCode.toUpperCase());
   };
   const allowedNickname = (nickName: string): boolean => {
     return !['Host'].includes(nickName);
