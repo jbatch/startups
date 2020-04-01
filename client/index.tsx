@@ -32,7 +32,6 @@ const useStyles = makeStyles((theme) => ({
   main: {
     display: 'flex',
     flexGrow: 1,
-    border: '3px solid green',
     padding: theme.spacing(3),
     marginTop: theme.mixins.toolbar.minHeight,
   },
