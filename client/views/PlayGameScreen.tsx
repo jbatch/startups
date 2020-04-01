@@ -40,6 +40,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   const [startups, setStartups] = useState<Startups>(null);
   const [openDrawerName, setOpenDrawerName] = useState<DrawerType>(null);
   const [flipDeck, setFlipDeck] = useState<boolean>(false);
+  const [roomId, setRoomId] = useState<string>(null);
 
   const socket = getSocket();
 
@@ -55,6 +56,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
         console.log('GAME-STATE');
         // console.log(gameState);
         setPlayers(players.filter((p) => p.nickName !== 'Host'));
+        setRoomId(roomId);
         const s = new Startups({ state: gameState });
         (window as any).startups = s;
         console.log(s);
@@ -68,6 +70,10 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
         }
       }
     );
+    socket.on('host-disconnected', () => {
+      alert('Host Disconnected');
+      socket.emit('player-leave-room', { roomCode: roomId });
+    });
     socket.emit('player-loaded-game');
 
     // make sure we clean up listeners to avoid memory leaks
