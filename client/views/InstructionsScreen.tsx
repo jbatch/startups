@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Typography, Grid, Button, Icon } from '@material-ui/core';
+import { Container, Typography, Grid, Button } from '@material-ui/core';
 import { ArrowBack, ArrowForward } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({

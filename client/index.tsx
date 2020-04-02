@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, SetStateAction, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 // @ts-ignore react-dom types seem to be super buggy, not importing them
 import ReactDom from 'react-dom';
 import {

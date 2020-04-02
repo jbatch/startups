@@ -1,14 +1,5 @@
-import React, { Dispatch, SetStateAction, useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Container, Paper, Card, Box, Typography, Grid, Avatar, Button, Badge } from '@material-ui/core';
-import { getSocket } from '../sockets';
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    paddingLeft: theme.spacing(3),
-    paddingRight: theme.spacing(3),
-  },
-}));
+import React from 'react';
+import { Card, Box, Typography, Grid } from '@material-ui/core';
 
 type PlayingCardProps = {
   name: string;
@@ -20,7 +11,6 @@ type PlayingCardProps = {
 };
 
 export default function PlayingCard(props: PlayingCardProps) {
-  const classes = useStyles();
   const { name, color, number, coins = 0, height = 200, onClick } = props;
   const heightStr = `${height}px`;
   const widthStr = `${height * 0.75}px`;

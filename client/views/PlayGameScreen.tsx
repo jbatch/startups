@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import { Container, Typography, Box } from '@material-ui/core';
 import { getSocket } from '../sockets';
 import { Startups, Move } from '../game-engine';
@@ -7,23 +6,6 @@ import ActionBar, { ActionBarDrawer, DrawerType } from '../components/ActionBar'
 import { Deck, Market } from '../components/DeckAndMarket';
 import GameOverView from '../components/GameOverView';
 import { ClickableCard } from '../components/ClickableCard';
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    padding: theme.spacing(1),
-  },
-  fabButton: {
-    position: 'absolute',
-    zIndex: 1,
-    top: -30,
-    left: 0,
-    right: 0,
-    margin: '0 auto',
-  },
-  spacer: {
-    height: theme.spacing(4),
-  },
-}));
 
 type PlayGameScreenProps = {
   playerId: string;

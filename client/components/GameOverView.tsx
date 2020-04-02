@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import { Startups } from '../game-engine';
 import { Container, Box, Typography, Button, Grid, Avatar, Paper } from '@material-ui/core';
 

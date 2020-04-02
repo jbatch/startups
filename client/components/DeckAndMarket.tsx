@@ -1,16 +1,7 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Box, Typography } from '@material-ui/core';
-import { DRAW_MOVE, MarketCard, Startups, Move } from '../game-engine';
+import { Grid, Typography } from '@material-ui/core';
+import { DRAW_MOVE, Startups, Move } from '../game-engine';
 import PlayingCard from './PlayingCard';
-import ActionBar, { ActionBarDrawer } from './ActionBar';
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    paddingLeft: theme.spacing(3),
-    paddingRight: theme.spacing(3),
-  },
-}));
 
 type DeckProps = {
   startups: Startups;
