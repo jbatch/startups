@@ -52,14 +52,12 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   useEffect(() => {
     socket.on(
       'game-state',
-      ({ roomId, players, gameState }: { roomId: string; players: Array<Player>; gameState: string }) => {
-        console.log('GAME-STATE');
+      ({ roomCode, players, gameState }: { roomCode: string; players: Array<Player>; gameState: string }) => {
         // console.log(gameState);
         setPlayers(players.filter((p) => p.nickName !== 'Host'));
-        setRoomId(roomId);
+        setRoomId(roomCode);
         const s = new Startups({ state: gameState });
         (window as any).startups = s;
-        console.log(s);
         setStartups(s);
 
         const isMyTurn = (s.state.players[s.state.turn].info as any).id === playerId;

@@ -104,7 +104,7 @@ export function configureSockets(appServer) {
       if (wasHost) {
         server.to(roomCode).emit('host-disconnected');
       }
-      console.log(`Player ${client.playerId} left room ${roomCode}`);
+      console.log(`Player ${client.playerId} left room ${roomCode} (host: ${wasHost})`);
     }
 
     async function allPlayersReady({ roomCode }) {

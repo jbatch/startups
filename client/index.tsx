@@ -106,8 +106,6 @@ export default function App() {
   const closeConfirmation = () => setConfirmationOpen(false);
 
   function onHomeButtonPressed(confirmed?: boolean) {
-    setRoomCode(null);
-    setHostRoomCode(null);
     if (curView === Views.JoinGameScreen) {
       setCurView(Views.StartScreen);
     }
@@ -115,8 +113,11 @@ export default function App() {
     if (curView === Views.JoinGameScreen) setCurView(Views.StartScreen);
     if (curView === Views.LobbyScreen || curView === Views.PlayGameScreen) {
       if (confirmed) {
+        console.log('Leaving room:', roomCode, hostRoomCode);
         socket.emit('player-leave-room', { roomCode });
         setCurView(Views.StartScreen);
+        setRoomCode(null);
+        setHostRoomCode(null);
       } else {
         setConfirmationOpen(true);
       }

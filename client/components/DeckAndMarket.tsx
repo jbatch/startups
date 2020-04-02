@@ -35,7 +35,7 @@ export function Deck(props: DeckProps) {
   return (
     <PlayingCard
       name={cardText}
-      color="grey"
+      color="blue"
       number={0}
       coins={0}
       height={150}
