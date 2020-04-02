@@ -1,56 +1,100 @@
 // Companies
 
-const ELEPHANT_MARS_TRAVEL = {
-  name: 'Elephant Mars Travel',
-  symbol: 'E',
+// const ELEPHANT_MARS_TRAVEL = {
+//   name: 'Elephant Mars Travel',
+//   symbol: 'E',
+//   number: 10,
+//   color: 'red',
+// };
+
+// const HIPPO_POWER_TECH = {
+//   name: 'Hippo Power Tech',
+//   symbol: 'H',
+//   number: 9,
+//   color: 'green',
+// };
+
+// const OCTO_COFFEE = {
+//   name: 'Octocoffee',
+//   symbol: 'O',
+//   number: 8,
+//   color: 'brown',
+// };
+
+// const FLAMINGOSOFT = {
+//   name: 'Flamingosoft',
+//   symbol: 'F',
+//   number: 7,
+//   color: 'pink',
+// };
+
+// const BOW_WOW_GAMES = {
+//   name: 'Bow Wow Game',
+//   symbol: 'B',
+//   number: 6,
+//   color: 'blue',
+// };
+
+// const GIRAFFE_BEER = {
+//   name: 'Giraffe Beer',
+//   symbol: 'G',
+//   number: 5,
+//   color: 'orange',
+// };
+
+// const companies = [ELEPHANT_MARS_TRAVEL, HIPPO_POWER_TECH, OCTO_COFFEE, FLAMINGOSOFT, BOW_WOW_GAMES, GIRAFFE_BEER];
+
+const DOG_AND_PWN = {
+  name: 'Dog and Pwn',
+  symbol: 'D',
   number: 10,
-  color: 'red',
+  color: '#F56F36',
 };
 
-const HIPPO_POWER_TECH = {
-  name: 'Hippo Power Tech',
-  symbol: 'H',
-  number: 9,
-  color: 'green',
-};
-
-const OCTO_COFFEE = {
-  name: 'Octocoffee',
-  symbol: 'O',
-  number: 8,
-  color: 'brown',
-};
-
-const FLAMINGOSOFT = {
-  name: 'Flamingosoft',
-  symbol: 'F',
-  number: 7,
-  color: 'pink',
-};
-
-const BOW_WOW_GAMES = {
-  name: 'Bow Wow Game',
+const BRIGHT_CATS = {
+  name: 'Bright Cats',
   symbol: 'B',
+  number: 9,
+  color: '#018037',
+};
+
+const HAPPY_OTTER = {
+  name: 'Happy Otter',
+  symbol: 'H',
+  number: 8,
+  color: '#D60A0D',
+};
+
+const PENTA_EAGLE = {
+  name: 'Penta Eagle',
+  symbol: 'P',
+  number: 7,
+  color: '#CB6CE6',
+};
+
+const SLY_FOX = {
+  name: 'Sly Fox',
+  symbol: 'S',
   number: 6,
-  color: 'blue',
+  color: '#43D9E6',
 };
 
-const GIRAFFE_BEER = {
-  name: 'Giraffe Beer',
-  symbol: 'G',
+const TURTLEDOVE = {
+  name: 'Turtledove',
+  symbol: 'T',
   number: 5,
-  color: 'orange',
+  color: '#004AAD',
 };
 
-const companies = [ELEPHANT_MARS_TRAVEL, HIPPO_POWER_TECH, OCTO_COFFEE, FLAMINGOSOFT, BOW_WOW_GAMES, GIRAFFE_BEER];
+const companies = [DOG_AND_PWN, BRIGHT_CATS, HAPPY_OTTER, PENTA_EAGLE, SLY_FOX, TURTLEDOVE];
 
 const FULL_DECK = [
-  ...repeat({ company: ELEPHANT_MARS_TRAVEL }, 10),
-  ...repeat({ company: HIPPO_POWER_TECH }, 9),
-  ...repeat({ company: OCTO_COFFEE }, 8),
-  ...repeat({ company: FLAMINGOSOFT }, 7),
-  ...repeat({ company: BOW_WOW_GAMES }, 6),
-  ...repeat({ company: GIRAFFE_BEER }, 5),
+  ...repeat({ company: DOG_AND_PWN }, 10),
+  ...repeat({ company: BRIGHT_CATS }, 9),
+  ...repeat({ company: HAPPY_OTTER }, 8),
+  ...repeat({ company: PENTA_EAGLE }, 7),
+  ...repeat({ company: SLY_FOX }, 6),
+  ...repeat({ company: TURTLEDOVE }, 5),
 ];
 
 const DEFAULT_STATE = {

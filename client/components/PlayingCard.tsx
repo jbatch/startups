@@ -27,6 +27,16 @@ export default function PlayingCard(props: PlayingCardProps) {
   const topBarHeight = `${height * 0.2}px`;
   const boxPadding = `${height * 0.05}px`;
   const coinSize = `${height * 0.15}px`;
+  const logoSize = `${height * 0.5}px`;
+
+  const cardUrlMap: Record<string, string> = {
+    'Dog and Pwn': 'dog_and_pwn.png',
+    'Bright Cats': 'bright_cats.png',
+    'Happy Otter': 'happy_otter.png',
+    'Penta Eagle': 'penta_eagle.png',
+    'Sly Fox': 'sly_fox.png',
+    Turtledove: 'turtledove.png',
+  };
 
   const disabledStyles = color === 'grey' ? { filter: 'grayscale(1)' } : {};
 
@@ -62,7 +72,11 @@ export default function PlayingCard(props: PlayingCardProps) {
           textAlign="center"
           padding={boxPadding}
         >
-          <Typography>{name}</Typography>
+          {cardUrlMap[name] ? (
+            <img src={process.env.BASE_URL + '/' + cardUrlMap[name]} style={{ height: logoSize, width: logoSize }} />
+          ) : (
+            <Typography>{name}</Typography>
+          )}
         </Box>
         <Box
           display="flex"

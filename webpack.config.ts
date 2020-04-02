@@ -3,6 +3,7 @@ import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
 
+const pathPrefix = process.env.BASE_URL ? process.env.BASE_URL : '';
 const config: webpack.Configuration = {
   context: path.resolve(__dirname),
   entry: './client/index.tsx',
@@ -37,10 +38,25 @@ const config: webpack.Configuration = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './public/index.html',
+      template: './public/index.ejs',
+      templateParameters: (compilation, assets, assetTags, options) => {
+        return {
+          compilation,
+          webpackConfig: compilation.options,
+          htmlWebpackPlugin: {
+            tags: assetTags,
+            files: assets,
+            options,
+          },
+          pathPrefix,
+        };
+      },
       filename: './index.html',
     }),
-    new CopyPlugin([{ from: 'public/*.png', to: './[name].[ext]' }]),
+    new CopyPlugin([
+      { from: 'public/*.png', to: './[name].[ext]' },
+      { from: 'public/*.json', to: './[name].[ext]' },
+    ]),
     new webpack.EnvironmentPlugin({ BASE_URL: 'http://localhost:8000' }),
   ],
 };
