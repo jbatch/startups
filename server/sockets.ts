@@ -141,7 +141,6 @@ export function configureSockets(appServer) {
         roomCode: user.roomCode,
         players: usersInRoom,
         gameState: startups.dumpState(),
-        lastPlayerMove: { playerId: client.playerId, ...move },
       });
     }
 
