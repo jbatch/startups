@@ -137,9 +137,12 @@ export function configureSockets(appServer) {
         startups.move(move);
         await setGameStateForRoom(user.roomCode, startups.dumpState());
       }
-      server
-        .to(user.roomCode)
-        .emit('game-state', { roomCode: user.roomCode, players: usersInRoom, gameState: startups.dumpState() });
+      server.to(user.roomCode).emit('game-state', {
+        roomCode: user.roomCode,
+        players: usersInRoom,
+        gameState: startups.dumpState(),
+        lastPlayerMove: { playerId: client.playerId, ...move },
+      });
     }
 
     async function nextGameOverStep() {

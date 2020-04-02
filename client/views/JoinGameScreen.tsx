@@ -35,12 +35,12 @@ export default function JoinGameScreen(props: JoinGameScreenProps) {
   };
   const onNickNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const nickName = e.target.value;
+    setNickName(nickName);
     if (!allowedNickname(nickName)) {
       setNameError('That nickname is not allowed');
-      return;
+    } else {
+      setNameError(null);
     }
-    setNameError(null);
-    setNickName(nickName);
   };
   const onRoomCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => setRoomCode(e.target.value);
   const disableRoomCodeInput = hostRoomCode !== null;

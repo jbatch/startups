@@ -1,6 +1,6 @@
-import React, { Dispatch, SetStateAction, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Paper, Card, Box, Typography, Grid, Avatar, Button } from '@material-ui/core';
+import { Container, Paper, Box, Typography, Grid, Avatar, Button } from '@material-ui/core';
 import { getSocket } from '../sockets';
 
 const useStyles = makeStyles((theme) => ({
@@ -27,7 +27,6 @@ export default function LobbyScreen(props: LobbyScreenProps) {
   const [players, setPlayers] = useState<Array<Player>>([]);
   const classes = useStyles();
   const socket = getSocket();
-  console.log(players);
 
   // Will only be called on first render
   useEffect(() => {

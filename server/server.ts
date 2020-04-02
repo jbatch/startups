@@ -1,7 +1,6 @@
 import express from 'express';
 import http from 'http';
 import path from 'path';
-import compression from 'compression';
 
 import { routes } from './routes';
 import { configureSockets } from './sockets';
@@ -10,8 +9,6 @@ import { createInitialTables } from './repository';
 const app = express();
 const server = http.createServer(app);
 
-// tslint:disable-next-line
-// app.use(compression());
 app.use(routes);
 configureSockets(server);
 
