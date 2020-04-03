@@ -6,6 +6,7 @@ import ActionBar, { ActionBarDrawer, DrawerType } from '../components/ActionBar'
 import { Deck, Market } from '../components/DeckAndMarket';
 import GameOverView from '../components/GameOverView';
 import { ClickableCard } from '../components/ClickableCard';
+import HostView from '../components/HostView';
 
 type PlayGameScreenProps = {
   playerId: string;
@@ -35,12 +36,12 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
     socket.on(
       'game-state',
       ({ roomCode, players, gameState }: { roomCode: string; players: Array<Player>; gameState: string }) => {
-        // console.log(gameState);
         setPlayers(players.filter((p) => p.nickName !== 'Host'));
         setRoomId(roomCode);
         const s = new Startups({ state: gameState });
         (window as any).startups = s;
         setStartups(s);
+        console.log(s);
 
         const isMyTurn = (s.state.players[s.state.turn].info as any).id === playerId;
         if (isMyTurn && s.state.step === 'PLAY') {
@@ -148,7 +149,10 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   const curPlayerTurn = startups.state.players[startups.state.turn];
   const curPlayerName = (curPlayerTurn.info as any).nickName;
   const isMyTurn = (curPlayerTurn.info as any).id === playerId;
+  const host = startups.state.players.find((player) => (player.info as any).hostMode !== null);
+  const showHostView = (host.info as any).id === playerId && (host.info as any).hostMode === 'Host';
 
+  if (showHostView && phase === 'PLAY') return <HostView startups={startups} playerId={playerId} />;
   if (phase === 'GAME_OVER') return <GameOverView startups={startups} playerId={playerId} />;
   if (!isMyTurn) return <WaitingView curPlayer={curPlayerName} />;
   if (phase === 'DRAW') return <DrawingView />;
