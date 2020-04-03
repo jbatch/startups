@@ -108,7 +108,7 @@ export function configureSockets(appServer) {
     }
 
     async function allPlayersReady({ roomCode }) {
-      const usersInRoom = await getUsersInRoom(roomCode);
+      const usersInRoom = (await getUsersInRoom(roomCode)).filter((p) => p.hostMode !== 'Host');
       const startups = new Startups({ players: shuffle(usersInRoom) });
       await startGameForRoom(roomCode, startups.dumpState());
       console.log(`Starting game in room ${roomCode}`);
@@ -118,16 +118,18 @@ export function configureSockets(appServer) {
     async function playerLoadedGame() {
       const user = await getUser(client.playerId);
       const usersInRoom = await getUsersInRoom(user.roomCode);
+      const hostId = usersInRoom.filter((p) => p.hostMode === 'Host' || p.hostMode === 'Player');
       const room = await getRoom(user.roomCode);
       // Only send once to each client
       console.log('Sending game-state to' + JSON.stringify({ user, roomCode: user.roomCode }));
-      client.emit('game-state', { roomCode: user.roomCode, players: usersInRoom, gameState: room.gameState });
+      client.emit('game-state', { roomCode: user.roomCode, players: usersInRoom, gameState: room.gameState, hostId });
     }
 
     async function playerMove({ move }) {
       console.log(`${client.playerId} trying to do move ${JSON.stringify(move)}`);
       const user = await getUser(client.playerId);
       const usersInRoom = await getUsersInRoom(user.roomCode);
+      const hostId = usersInRoom.filter((p) => p.hostMode === 'Host' || p.hostMode === 'Player');
       const room = await getRoom(user.roomCode);
       const startups = new Startups({ state: room.gameState });
       const validMove = startups.moves().find((m) => isEqual(m, move));
@@ -141,6 +143,7 @@ export function configureSockets(appServer) {
         roomCode: user.roomCode,
         players: usersInRoom,
         gameState: startups.dumpState(),
+        hostId,
       });
     }
 

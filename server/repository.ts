@@ -84,7 +84,7 @@ export async function addUserToRoom(
   }
 }
 
-export async function getUsersInRoom(roomCode: string): Promise<UserRecord> {
+export async function getUsersInRoom(roomCode: string): Promise<Array<UserRecord>> {
   try {
     return (await db).all('SELECT * FROM users WHERE roomCode = ?', [roomCode]);
   } catch (error) {
