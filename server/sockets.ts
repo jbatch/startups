@@ -118,7 +118,7 @@ export function configureSockets(appServer) {
     async function playerLoadedGame() {
       const user = await getUser(client.playerId);
       const usersInRoom = await getUsersInRoom(user.roomCode);
-      const hostId = usersInRoom.filter((p) => p.hostMode === 'Host' || p.hostMode === 'Player');
+      const hostId = usersInRoom.filter((p) => p.hostMode === 'Host' || p.hostMode === 'Player')[0].id;
       const room = await getRoom(user.roomCode);
       // Only send once to each client
       console.log('Sending game-state to' + JSON.stringify({ user, roomCode: user.roomCode }));
@@ -129,7 +129,7 @@ export function configureSockets(appServer) {
       console.log(`${client.playerId} trying to do move ${JSON.stringify(move)}`);
       const user = await getUser(client.playerId);
       const usersInRoom = await getUsersInRoom(user.roomCode);
-      const hostId = usersInRoom.filter((p) => p.hostMode === 'Host' || p.hostMode === 'Player');
+      const hostId = usersInRoom.filter((p) => p.hostMode === 'Host' || p.hostMode === 'Player')[0].id;
       const room = await getRoom(user.roomCode);
       const startups = new Startups({ state: room.gameState });
       const validMove = startups.moves().find((m) => isEqual(m, move));

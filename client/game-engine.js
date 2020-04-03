@@ -106,6 +106,7 @@ const DEFAULT_STATE = {
   step: 'DRAW',
   lastDrawnCompany: null,
   results: null,
+  lastPlayedMove: null,
 };
 
 const PLAYER_TEMPLATE = {
@@ -360,6 +361,7 @@ class Startups {
         this.state.market.push({ ...card, coins: [] });
         break;
     }
+    this.state.lastPlayedMove = { player: this.state.turn, card, dest: move.dest };
     this.currentPlayer().cardsInHand--;
     this.state.step = 'DRAW';
     this.state.lastDrawnCompany = null;
