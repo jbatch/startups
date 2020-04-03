@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Box } from '@material-ui/core';
 import { getSocket } from '../sockets';
-import { Startups, Move } from '../game-engine';
+import { Startups, Move, Card } from '../game-engine';
 import ActionBar, { ActionBarDrawer, DrawerType } from '../components/ActionBar';
 import { Deck, Market } from '../components/DeckAndMarket';
 import GameOverView from '../components/GameOverView';
@@ -17,6 +17,17 @@ type Player = {
   nickName: string;
 };
 
+type LastMove = {
+  playerName: string;
+  card: Card;
+  dest: 'FIELD' | 'MARKET';
+};
+type GameState = {
+  roomCode: string;
+  players: Array<Player>;
+  gameState: string;
+  hostId: string;
+};
 export default function PlayGameScreen(props: PlayGameScreenProps) {
   const { playerId } = props;
   const [players, setPlayers] = useState<Array<Player>>([]);
@@ -25,6 +36,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   const [flipDeck, setFlipDeck] = useState<boolean>(false);
   const [roomId, setRoomId] = useState<string>(null);
   const [hostId, setHostId] = useState<string>(null);
+  const [lastMove, setLastMove] = useState<LastMove | null>(null);
 
   const socket = getSocket();
 
@@ -34,36 +46,42 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
 
   // Will only be called on first render
   useEffect(() => {
-    socket.on(
-      'game-state',
-      ({
-        roomCode,
-        players,
-        gameState,
-        hostId,
-      }: {
-        roomCode: string;
-        players: Array<Player>;
-        gameState: string;
-        hostId: string;
-      }) => {
-        setPlayers(players.filter((p) => p.nickName !== 'Host'));
-        setRoomId(roomCode);
-        setHostId(hostId);
-        console.log('host id ', hostId);
-        const s = new Startups({ state: gameState });
-        (window as any).startups = s;
-        setStartups(s);
-        console.log(s);
+    socket.on('game-state', ({ roomCode, players, gameState, hostId }: GameState) => {
+      setPlayers(players.filter((p) => p.nickName !== 'Host'));
+      setRoomId(roomCode);
+      setHostId(hostId);
 
-        const isMyTurn = (s.state.players[s.state.turn].info as any).id === playerId;
-        if (isMyTurn && s.state.step === 'PLAY') {
-          openHandDrawer();
-        } else {
-          closeDrawer();
-        }
+      const s = new Startups({ state: gameState });
+      (window as any).startupsD = s;
+      console.log('here', s);
+
+      // if we recieve an update for a play move that was not our own, display it and wait before
+      // setting the new state
+      if (
+        s.state.lastPlayedMove &&
+        (s.state.players[s.state.lastPlayedMove.player].info as any).id !== playerId &&
+        s.state.step === 'DRAW'
+      ) {
+        const playerName = (s.state.players[s.state.lastPlayedMove.player].info as any).nickName as string;
+        const { card, dest } = s.state.lastPlayedMove;
+        setLastMove({ playerName, card, dest });
+
+        setTimeout(() => {
+          setStartups(s);
+          setLastMove(null);
+        }, 2000);
+      } else {
+        setStartups(s);
       }
-    );
+
+      // Auto-open/close the hand drawer
+      const isMyTurn = (s.state.players[s.state.turn].info as any).id === playerId;
+      if (isMyTurn && s.state.step === 'PLAY') {
+        openHandDrawer();
+      } else {
+        closeDrawer();
+      }
+    });
     socket.on('host-disconnected', () => {
       alert('Host Disconnected');
       socket.emit('player-leave-room', { roomCode: roomId });
@@ -112,26 +130,42 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
     );
   };
 
-  const WaitingView = ({ curPlayer }: { curPlayer: string }) => (
-    <Container maxWidth="sm">
-      <Typography variant="h5">
-        Waiting for <strong>{curPlayer}</strong>...
-      </Typography>
+  const WaitingView = ({ curPlayer }: { curPlayer: string }) => {
+    if (lastMove) {
+      const { playerName, card, dest } = lastMove;
+      const destStr = dest === 'FIELD' ? 'their field' : 'The Market™';
+      return (
+        <Container maxWidth="sm">
+          <Typography variant="h5">
+            <strong>{playerName}</strong> played a "{card.company.name}" to {destStr}
+          </Typography>
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <ClickableCard card={card} moves={[]} onMoveSelected={() => {}} />
+          </Box>
+        </Container>
+      );
+    }
+    return (
+      <Container maxWidth="sm">
+        <Typography variant="h5">
+          Waiting for <strong>{curPlayer}</strong>...
+        </Typography>
 
-      <Box mt={2} />
-      <Market startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
+        <Box mt={2} />
+        <Market startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
 
-      <ActionBar openHandDrawer={openHandDrawer} openPlayersDrawer={openPlayersDrawer} />
+        <ActionBar openHandDrawer={openHandDrawer} openPlayersDrawer={openPlayersDrawer} />
 
-      <ActionBarDrawer
-        startups={startups}
-        playerId={playerId}
-        openDrawerName={openDrawerName}
-        onClose={closeDrawer}
-        handleCardClickedFromHand={null}
-      />
-    </Container>
-  );
+        <ActionBarDrawer
+          startups={startups}
+          playerId={playerId}
+          openDrawerName={openDrawerName}
+          onClose={closeDrawer}
+          handleCardClickedFromHand={null}
+        />
+      </Container>
+    );
+  };
   const PlayingView = () => (
     <Container maxWidth="sm">
       <Typography>
@@ -165,8 +199,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
 
   const isHost = hostId === playerId;
   const isPlayer = startups.state.players.some((player) => (player.info as any).id === playerId);
-  console.log(hostId, isHost, isPlayer);
-  console.log('host view', isHost && !isPlayer && phase !== 'GAME_OVER');
+
   if (isHost && !isPlayer && phase !== 'GAME_OVER') return <HostView startups={startups} playerId={playerId} />;
   if (phase === 'GAME_OVER') return <GameOverView startups={startups} playerId={playerId} isHost={isHost} />;
   if (!isMyTurn) return <WaitingView curPlayer={curPlayerName} />;

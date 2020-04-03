@@ -22,7 +22,6 @@ export class Startups {
   payCostToDraw(): void;
   hasMonopolyToken(company: Company): boolean;
   playerHasMonopolyToken(playerIndex: number, company: Company): boolean;
-  lastPlayedMove?: { player: number; dest: 'FIELD' | 'MARKET'; card: Card };
 }
 
 export type Move = DRAW_MOVE | PLAY_MOVE;
@@ -48,6 +47,7 @@ export type State = {
   lastDrawnCompany: Company | null;
   results: GameResult | null;
   playersPreGameOver: Array<Player>;
+  lastPlayedMove?: { player: number; dest: 'FIELD' | 'MARKET'; card: Card };
 };
 
 export type GameResult = {
