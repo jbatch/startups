@@ -28,10 +28,11 @@ const useStyles = makeStyles((theme) => ({
 type GameOverViewProps = {
   startups: Startups;
   playerId: string;
+  isHost: boolean;
 };
 
 export default function GameOverView(props: GameOverViewProps) {
-  const { startups, playerId } = props;
+  const { startups, isHost } = props;
   const classes = useStyles();
 
   const socket = getSocket();
@@ -46,9 +47,7 @@ export default function GameOverView(props: GameOverViewProps) {
   const gameOverStep = results.gameOverStepIndex;
   const winner = startups.state.players[results.winner.player];
   const winnerName = (winner as any).info.nickName;
-  const host: any = startups.state.players.find((player: any) => player.info.hostMode !== null);
   const players = startups.state.players;
-  const isHost = host.info.id === playerId;
   const companies = startups.state.results.companyResults.map((c) => c.company);
 
   const startingSteps = 2;

@@ -59,7 +59,7 @@ export function Market(props: MarketProps) {
   return (
     <div>
       <Typography variant="h5">Market</Typography>
-      <Grid container direction="row" justify="space-between">
+      <Grid container direction="row" justify="space-around">
         {cardsToRender.length === 0 && <Typography>Market is empty</Typography>}
         {cardsToRender.map(({ card, move, idx }) => (
           <PlayingCard

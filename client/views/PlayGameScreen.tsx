@@ -24,6 +24,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   const [openDrawerName, setOpenDrawerName] = useState<DrawerType>(null);
   const [flipDeck, setFlipDeck] = useState<boolean>(false);
   const [roomId, setRoomId] = useState<string>(null);
+  const [hostId, setHostId] = useState<string>(null);
 
   const socket = getSocket();
 
@@ -35,9 +36,21 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   useEffect(() => {
     socket.on(
       'game-state',
-      ({ roomCode, players, gameState }: { roomCode: string; players: Array<Player>; gameState: string }) => {
+      ({
+        roomCode,
+        players,
+        gameState,
+        hostId,
+      }: {
+        roomCode: string;
+        players: Array<Player>;
+        gameState: string;
+        hostId: string;
+      }) => {
         setPlayers(players.filter((p) => p.nickName !== 'Host'));
         setRoomId(roomCode);
+        setHostId(hostId);
+        console.log('host id ', hostId);
         const s = new Startups({ state: gameState });
         (window as any).startups = s;
         setStartups(s);
@@ -149,11 +162,13 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   const curPlayerTurn = startups.state.players[startups.state.turn];
   const curPlayerName = (curPlayerTurn.info as any).nickName;
   const isMyTurn = (curPlayerTurn.info as any).id === playerId;
-  const host = startups.state.players.find((player) => (player.info as any).hostMode !== null);
-  const showHostView = (host.info as any).id === playerId && (host.info as any).hostMode === 'Host';
 
-  if (showHostView && phase === 'PLAY') return <HostView startups={startups} playerId={playerId} />;
-  if (phase === 'GAME_OVER') return <GameOverView startups={startups} playerId={playerId} />;
+  const isHost = hostId === playerId;
+  const isPlayer = startups.state.players.some((player) => (player.info as any).id === playerId);
+  console.log(hostId, isHost, isPlayer);
+  console.log('host view', isHost && !isPlayer && phase !== 'GAME_OVER');
+  if (isHost && !isPlayer && phase !== 'GAME_OVER') return <HostView startups={startups} playerId={playerId} />;
+  if (phase === 'GAME_OVER') return <GameOverView startups={startups} playerId={playerId} isHost={isHost} />;
   if (!isMyTurn) return <WaitingView curPlayer={curPlayerName} />;
   if (phase === 'DRAW') return <DrawingView />;
   if (phase === 'PLAY') return <PlayingView />;
