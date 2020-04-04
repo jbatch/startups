@@ -30,7 +30,8 @@ export function Deck(props: DeckProps) {
       number={0}
       coins={0}
       height={150}
-      onClick={() => handleActionClicked(drawMove as Move)}
+      onNoOnClickMessage="You cannot afford to pick up this card!"
+      onClick={drawMove ? () => handleActionClicked(drawMove as Move) : undefined}
     />
   );
 }
@@ -68,6 +69,7 @@ export function Market(props: MarketProps) {
             number={card.company.number}
             coins={card.coins.length}
             height={150}
+            onNoOnClickMessage="You already have a monopoly on this company!"
             onClick={move ? () => handleActionClicked(move) : undefined}
             key={'draw-deck-action-' + idx}
           />

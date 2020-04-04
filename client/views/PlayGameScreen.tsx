@@ -5,8 +5,8 @@ import { Startups, Move, Card } from '../game-engine';
 import ActionBar, { ActionBarDrawer, DrawerType } from '../components/ActionBar';
 import { Deck, Market } from '../components/DeckAndMarket';
 import GameOverView from '../components/GameOverView';
-import { ClickableCard } from '../components/ClickableCard';
 import HostView from '../components/HostView';
+import PlayingCard from '../components/PlayingCard';
 
 type PlayGameScreenProps = {
   playerId: string;
@@ -110,11 +110,13 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
 
   const DrawingView = () => {
     const topOfDeck = startups.state.deck[0];
+    const { name, color, number } = topOfDeck.company;
+
     return (
       <Container maxWidth="sm">
         <Typography variant="h6">It's your turn to draw a card!</Typography>
         {!flipDeck && <Deck startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />}
-        {flipDeck && <ClickableCard card={topOfDeck} moves={[]} onMoveSelected={() => {}} />}
+        {flipDeck && <PlayingCard name={name} color={color} number={number} coins={0} height={150} />}
         <Box mt={2} />
         <Market startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
         <ActionBar openHandDrawer={openHandDrawer} openPlayersDrawer={openPlayersDrawer} />
@@ -134,13 +136,14 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
     if (lastMove) {
       const { playerName, card, dest } = lastMove;
       const destStr = dest === 'FIELD' ? 'their field' : 'The Market™';
+      const { name, color, number } = card.company;
       return (
         <Container maxWidth="sm">
           <Typography variant="h5">
             <strong>{playerName}</strong> played a "{card.company.name}" to {destStr}
           </Typography>
-          <Box display="flex" alignItems="center" justifyContent="center">
-            <ClickableCard card={card} moves={[]} onMoveSelected={() => {}} />
+          <Box display="flex" alignItems="center" justifyContent="center" height={150}>
+            <PlayingCard name={name} color={color} number={number} coins={0} />
           </Box>
         </Container>
       );
