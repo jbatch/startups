@@ -1,10 +1,28 @@
 import React from 'react';
-import { Container, Box, Typography, Button, Drawer, AppBar, Toolbar, GridList } from '@material-ui/core';
+import {
+  Container,
+  Box,
+  Typography,
+  Button,
+  Drawer,
+  AppBar,
+  Toolbar,
+  GridList,
+  ButtonGroup,
+  makeStyles,
+} from '@material-ui/core';
 import { Startups, companies, PLAY_MOVE, Move } from '../game-engine';
 import { ClickableCard } from './ClickableCard';
 import PlayerStatsComponent from './PlayerStatsComponent';
 
 export type DrawerType = 'players' | 'hand' | null;
+
+const useStyles = makeStyles((theme) => ({
+  button: {
+    color: 'white',
+    borderColor: 'rgba(255,255,255,0.6)',
+  },
+}));
 
 type ActionBarDrawerProps = {
   startups: Startups;
@@ -66,17 +84,23 @@ type ActionBarProps = {
 
 export default function ActionBar(props: ActionBarProps) {
   const { openPlayersDrawer, openHandDrawer } = props;
+  const classes = useStyles();
+
   return (
     <AppBar position="fixed" color="primary" style={{ bottom: 0, top: 'auto' }}>
       <Container maxWidth="sm">
-        <Toolbar>
-          <Button type="button" fullWidth variant="contained" color="primary" onClick={openHandDrawer}>
-            Show Hand
-          </Button>
-          <Button type="button" fullWidth variant="contained" color="primary" onClick={openPlayersDrawer}>
-            Show Scores
-          </Button>
-        </Toolbar>
+        <Box display="flex" justifyContent="center">
+          <Toolbar>
+            <ButtonGroup color="default">
+              <Button type="button" classes={{ root: classes.button }} onClick={openHandDrawer}>
+                Show Hand
+              </Button>
+              <Button type="button" classes={{ root: classes.button }} onClick={openPlayersDrawer}>
+                Show Scores
+              </Button>
+            </ButtonGroup>
+          </Toolbar>
+        </Box>
       </Container>
     </AppBar>
   );
