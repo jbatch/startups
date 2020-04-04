@@ -27,7 +27,6 @@ function initialiseSocket(welcomeCallback: (welcomeData: WelcomeData) => void) {
   }
 
   socket.on('connect', () => {
-    console.log('Connected to server');
     const id = localStorage.getItem('id');
     socket.emit('handshake', { id });
   });

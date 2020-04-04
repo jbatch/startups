@@ -9,10 +9,8 @@
         socket.emit('handshake', { id });
       });
       socket.on('welcome', function ({ id, roomCode, nickName }) {
-        console.log(`Have connected to server. I am client idbbb: ${id}`);
-        console.log({ roomCode, nickName });
+        console.log(`Have connected to server. I am client id: ${id}`);
         localStorage.setItem('id', id);
-        console.log('here');
         if (!roomCode) {
           socket.emit('create-room');
         }

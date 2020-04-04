@@ -53,7 +53,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
 
       const s = new Startups({ state: gameState });
       (window as any).startupsD = s;
-      console.log('here', s);
+      console.log(s); // keep this till final release
 
       // if we recieve an update for a play move that was not our own, display it and wait before
       // setting the new state
@@ -95,7 +95,6 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   }, []);
 
   const handleActionClicked = (move: Move) => {
-    console.log('Action clicked: ', move);
     if (move.action === 'DRAW' && move.src === 'DECK') {
       setFlipDeck(true);
       setTimeout(() => {

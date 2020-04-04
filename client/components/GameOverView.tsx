@@ -138,10 +138,7 @@ export default function GameOverView(props: GameOverViewProps) {
     return player.coins.length + receieved * 3 - payed;
   });
   console.log('playerScores', playerScores, numCompaniesScoresUpdated);
-  // console.log('numCompaniesScoresUpdated', numCompaniesScoresUpdated);
 
-  // const displayWinner = true;
-  // const showPlayers = true;
   const topText = displayWinner ? `${winnerName}  wins!` : 'Game Over!';
   const isBigScreen = isHost && !isPlayer;
 

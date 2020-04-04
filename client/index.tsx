@@ -113,7 +113,6 @@ export default function App() {
     if (curView === Views.JoinGameScreen) setCurView(Views.StartScreen);
     if (curView === Views.LobbyScreen || curView === Views.PlayGameScreen) {
       if (confirmed) {
-        console.log('Leaving room:', roomCode, hostRoomCode);
         socket.emit('player-leave-room', { roomCode });
         setCurView(Views.StartScreen);
         setRoomCode(null);
@@ -135,7 +134,6 @@ export default function App() {
   const onHostRoomCodeChange = (roomCode: string) => {
     // hostRoomCode is only used to override the users ability to set a room code
     // so that we can re-use the
-    console.log('Room code recieved from backend', roomCode);
     setHostRoomCode(roomCode);
     setRoomCode(roomCode);
   };
