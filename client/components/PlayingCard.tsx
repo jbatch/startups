@@ -29,7 +29,7 @@ export default function PlayingCard(props: PlayingCardProps) {
   };
 
   const disabledStyles = color === 'grey' ? { filter: 'grayscale(1)' } : {};
-
+  const middleSectionStyles = cardUrlMap[name] ? {} : { background: 'white' };
   return (
     <Card
       style={{
@@ -38,6 +38,7 @@ export default function PlayingCard(props: PlayingCardProps) {
         display: 'flex',
         marginTop: '10px',
         userSelect: 'none',
+        backgroundColor: color,
         ...disabledStyles,
       }}
       onClick={onClick}
@@ -61,6 +62,7 @@ export default function PlayingCard(props: PlayingCardProps) {
           maxWidth={widthStr}
           textAlign="center"
           padding={boxPadding}
+          style={middleSectionStyles}
         >
           {cardUrlMap[name] ? (
             <img src={process.env.BASE_URL + '/' + cardUrlMap[name]} style={{ height: logoSize, width: logoSize }} />
