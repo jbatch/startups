@@ -13,7 +13,7 @@ app.use(routes);
 configureSockets(server);
 
 // If not matched anything yet server from dist
-app.use(express.static(path.join(__dirname, '..', 'dist')));
+app.use(express.static(path.join(__dirname, '..', 'client')));
 
 async function main() {
   await createInitialTables();
