@@ -201,7 +201,8 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   const isPlayer = startups.state.players.some((player) => (player.info as any).id === playerId);
 
   if (isHost && !isPlayer && phase !== 'GAME_OVER') return <HostView startups={startups} playerId={playerId} />;
-  if (phase === 'GAME_OVER') return <GameOverView startups={startups} playerId={playerId} isHost={isHost} />;
+  if (phase === 'GAME_OVER')
+    return <GameOverView startups={startups} playerId={playerId} isHost={isHost} isPlayer={isPlayer} />;
   if (!isMyTurn) return <WaitingView curPlayer={curPlayerName} />;
   if (phase === 'DRAW') return <DrawingView />;
   if (phase === 'PLAY') return <PlayingView />;

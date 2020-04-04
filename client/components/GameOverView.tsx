@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Startups } from '../game-engine';
-import { Container, Box, Typography, Button, Grid, Avatar, Paper } from '@material-ui/core';
+import {
+  Container,
+  Box,
+  Typography,
+  Button,
+  Grid,
+  GridList,
+  GridListTile,
+  GridListTileBar,
+  Avatar,
+  Paper,
+} from '@material-ui/core';
 
 import { getSocket } from '../sockets';
 
@@ -23,16 +34,31 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(5),
     width: theme.spacing(5),
   },
+  tilebar: {
+    height: 'initial',
+    paddingBottom: '10px',
+    paddingTop: '5px',
+  },
 }));
 
 type GameOverViewProps = {
   startups: Startups;
   playerId: string;
   isHost: boolean;
+  isPlayer: boolean;
+};
+
+const cardUrlMap: Record<string, string> = {
+  'Dog and Pwn': 'dog_and_pwn.png',
+  'Bright Cats': 'bright_cats.png',
+  'Happy Otter': 'happy_otter.png',
+  'Penta Eagle': 'penta_eagle.png',
+  'Sly Fox': 'sly_fox.png',
+  Turtledove: 'turtledove.png',
 };
 
 export default function GameOverView(props: GameOverViewProps) {
-  const { startups, isHost } = props;
+  const { startups, isHost, isPlayer } = props;
   const classes = useStyles();
 
   const socket = getSocket();
@@ -56,7 +82,7 @@ export default function GameOverView(props: GameOverViewProps) {
   const showCompanies = gameOverStep >= 2;
   const showShareHolders = (gameOverStep - startingSteps) % stepsPerCompany >= 1;
   const showMonopoly = (gameOverStep - startingSteps) % stepsPerCompany >= 2;
-  // const showUpdatedScore = (gameOverStep - startingSteps) % stepsPerCompany >= 3;
+  const showUpdatedScore = (gameOverStep - startingSteps) % stepsPerCompany >= 3;
   const rehideCompany = (gameOverStep - startingSteps) % stepsPerCompany >= 4;
 
   const companyIndex = Math.min(
@@ -82,7 +108,14 @@ export default function GameOverView(props: GameOverViewProps) {
     0
   );
   const payedThisCompany = startups.state.results.companyResults[companyIndex].owedCoins || [];
-
+  const monopolyMap = startups.state.results.companyResults.map((companyResult) => {
+    const player = players[(companyResult.monopolyPlayer as unknown) as number];
+    const coins = companyResult.owedCoins.reduce((total, next) => total + next.count * 3, 0);
+    return {
+      nickName: (player.info as any).nickName,
+      coins: coins,
+    };
+  });
   const playerScores = startups.state.playersPreGameOver.map((player, playerIdx) => {
     const receieved = startups.state.results.companyResults
       // remove results that havent been tallied up yet
@@ -107,46 +140,49 @@ export default function GameOverView(props: GameOverViewProps) {
   console.log('playerScores', playerScores, numCompaniesScoresUpdated);
   // console.log('numCompaniesScoresUpdated', numCompaniesScoresUpdated);
 
+  // const displayWinner = true;
+  // const showPlayers = true;
+  const topText = displayWinner ? `${winnerName}  wins!` : 'Game Over!';
+  const isBigScreen = isHost && !isPlayer;
+
   return (
-    <Container>
+    <Container maxWidth="sm">
       <Box display="flex" flexDirection="column" height="100%">
         <Typography variant="h3" align="center">
-          Game Over
+          {topText}
         </Typography>
         <Box mt={3} />
-        <Box flex="1 0 auto">
-          {showPlayers && (
-            <Box>
-              <Paper className={classes.paper}>
-                <Grid container justify="center">
-                  {players.map((player, idx) => {
-                    const name = (player.info as any).nickName;
-                    return (
-                      <Box
-                        flexDirection="column"
-                        display="flex"
-                        p={0}
-                        justifyContent="center"
-                        alignItems="center"
-                        key={'p-' + idx}
-                      >
-                        <Avatar alt={name} className={classes.large}>
-                          {name[0].toUpperCase()}
-                        </Avatar>
-                        <Box display="flex" alignItems="center" fontSize="26px">
-                          <img src={process.env.BASE_URL + '/coin.png'} className={classes.coin}></img>
-                          <Box>
-                            <Typography style={{ fontSize: 'larger' }}>{playerScores[idx]}</Typography>
-                          </Box>
-                        </Box>
+        {showPlayers && (
+          <Paper className={classes.paper}>
+            <Grid container justify="center">
+              {players.map((player, idx) => {
+                const name = (player.info as any).nickName;
+                return (
+                  <Box
+                    flexDirection="column"
+                    display="flex"
+                    p={0}
+                    justifyContent="center"
+                    alignItems="center"
+                    key={'p-' + idx}
+                  >
+                    <Avatar alt={name} className={classes.large}>
+                      {name[0].toUpperCase()}
+                    </Avatar>
+                    <Box display="flex" alignItems="center" fontSize="26px">
+                      <img src={process.env.BASE_URL + '/coin.png'} className={classes.coin}></img>
+                      <Box>
+                        <Typography style={{ fontSize: 'larger' }}>{playerScores[idx]}</Typography>
                       </Box>
-                    );
-                  })}
-                </Grid>
-              </Paper>
-              <Box mt={2} style={{ borderTop: '1px solid black' }} />
-            </Box>
-          )}
+                    </Box>
+                  </Box>
+                );
+              })}
+            </Grid>
+          </Paper>
+        )}
+        <Box mt={2} style={{ borderTop: '1px solid black' }} />
+        <Box flex="1 0 auto">
           {!displayWinner && showCompanies && !rehideCompany && (
             <Box>
               <Box mt={2} display="flex" alignItems="center">
@@ -171,6 +207,11 @@ export default function GameOverView(props: GameOverViewProps) {
                         </Box>
                       );
                     })}
+                    {shareholders.length === 0 && (
+                      <Box display="flex" alignItems="center" style={{ color: 'grey' }}>
+                        <Typography variant="h6">None</Typography>
+                      </Box>
+                    )}
                   </Box>
                 </Box>
               )}
@@ -189,14 +230,35 @@ export default function GameOverView(props: GameOverViewProps) {
             </Box>
           )}
           {displayWinner && (
-            <Box mt={4} display="flex" justifyContent="center">
-              <Typography variant="h4">{winnerName} wins!</Typography>
-            </Box>
+            <Container maxWidth="lg">
+              <Box mt={4} />
+              <GridList cols={isBigScreen ? 3 : 2}>
+                {companies.map((company, idx) => (
+                  <GridListTile key={company.name}>
+                    <img src={process.env.BASE_URL + '/' + cardUrlMap[company.name]} alt={company.name} />
+                    <GridListTileBar
+                      title={company.name}
+                      subtitle={monopolyMap[idx].nickName}
+                      classes={{ rootSubtitle: classes.tilebar }}
+                      actionIcon={
+                        <Box display="flex" alignItems="center" ml="auto">
+                          <img src={process.env.BASE_URL + '/coin.png'} style={{ height: '30px', width: '30px' }}></img>
+                          <Typography style={{ marginRight: '5px', color: 'white' }}>
+                            {monopolyMap[idx].coins}
+                          </Typography>
+                        </Box>
+                      }
+                    />
+                  </GridListTile>
+                ))}
+              </GridList>
+            </Container>
           )}
         </Box>
-        <Box flex="0 1 auto">
+
+        <Box flex="0 1 auto" display="flex" justifyContent="center">
           {isHost && (
-            <Button type="button" fullWidth variant="contained" color="primary" onClick={onNextClicked}>
+            <Button type="button" variant="contained" color="primary" onClick={onNextClicked}>
               Show Scores
             </Button>
           )}{' '}
