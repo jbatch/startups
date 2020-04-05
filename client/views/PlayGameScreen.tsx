@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Container, Typography, Box } from '@material-ui/core';
+import { Transition } from 'react-transition-group';
+
 import { getSocket } from '../sockets';
 import { Startups, Move, Card } from '../game-engine';
 import ActionBar, { ActionBarDrawer, DrawerType } from '../components/ActionBar';
@@ -7,6 +9,7 @@ import { Deck, Market } from '../components/DeckAndMarket';
 import GameOverView from '../components/GameOverView';
 import HostView from '../components/HostView';
 import PlayingCard from '../components/PlayingCard';
+import { createMoveToStyles } from '../animation';
 
 type PlayGameScreenProps = {
   playerId: string;
@@ -37,6 +40,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   const [roomId, setRoomId] = useState<string>(null);
   const [hostId, setHostId] = useState<string>(null);
   const [lastMove, setLastMove] = useState<LastMove | null>(null);
+  const cardToDrawRef = useRef(null);
 
   const socket = getSocket();
 
@@ -100,7 +104,7 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
       setTimeout(() => {
         socket.emit('player-move', { move });
         setFlipDeck(false);
-      }, 1000);
+      }, 10000);
     } else {
       socket.emit('player-move', { move });
       setFlipDeck(false);
@@ -110,12 +114,40 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
   const DrawingView = () => {
     const topOfDeck = startups.state.deck[0];
     const { name, color, number } = topOfDeck.company;
+    const drawCardAnimationStyles = createMoveToStyles(
+      cardToDrawRef.current,
+      { timeMs: 1000, x: 300, y: 300 },
+      flipDeck
+    );
+    const defaultStyle = {
+      transition: `opacity transform 1000ms ease-in-out`,
+      opacity: 0,
+    };
+    const transitionStyles = {
+      entering: { opacity: 1, transform: 'translateY(100px)' },
+      entered: { opacity: 1 },
+      exiting: { opacity: 0 },
+      exited: { opacity: 0 },
+      unmounted: {},
+    };
 
+    console.log(cardToDrawRef.current, drawCardAnimationStyles);
     return (
       <Container maxWidth="sm">
         <Typography variant="h6">It's your turn to draw a card!</Typography>
         {!flipDeck && <Deck startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />}
-        {flipDeck && <PlayingCard name={name} color={color} number={number} coins={0} height={150} />}
+        <Transition in={flipDeck} timeout={1000}>
+          {(state) => (
+            <div
+              style={{
+                ...defaultStyle,
+                ...transitionStyles[state],
+              }}
+            >
+              <PlayingCard name={name} color={color} number={number} coins={0} height={150} />
+            </div>
+          )}
+        </Transition>
         <Box mt={2} />
         <Market startups={startups} handleActionClicked={handleActionClicked} playerId={playerId} />
         <ActionBar openHandDrawer={openHandDrawer} openPlayersDrawer={openPlayersDrawer} />
