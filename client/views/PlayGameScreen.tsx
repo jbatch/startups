@@ -141,8 +141,8 @@ export default function PlayGameScreen(props: PlayGameScreenProps) {
           <Typography variant="h5">
             <strong>{playerName}</strong> played a "{card.company.name}" to {destStr}
           </Typography>
-          <Box display="flex" alignItems="center" justifyContent="center" height={150}>
-            <PlayingCard name={name} color={color} number={number} coins={0} />
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <PlayingCard name={name} color={color} number={number} coins={0} height={150} />
           </Box>
         </Container>
       );
