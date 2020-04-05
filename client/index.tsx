@@ -51,6 +51,27 @@ function shouldShowHomeButton(curView: Views) {
   ].includes(curView);
 }
 
+// function we can call to fetch all the images in the app to make sure they've
+// been fetched before trying to render them
+function preloadImages() {
+  const images = [
+    'dog_and_pwn.png',
+    'bright_cats.png',
+    'happy_otter.png',
+    'penta_eagle.png',
+    'sly_fox.png',
+    'turtledove.png',
+    'coin.png',
+    'HostMode.png',
+    'PlayerMode.png',
+  ];
+  images.forEach((img) => {
+    const tmp = new Image();
+    // No need to wait or add handlers, just load em
+    tmp.src = process.env.BASE_URL + '/' + img;
+  });
+}
+
 type HostMode = 'Host' | 'Player' | null;
 type Player = { id: string; nickName: string };
 
@@ -94,8 +115,10 @@ export default function App() {
     }
   };
 
+  // On run on first render
   useEffect(() => {
     setSocket(initialiseSocket(onWelcome));
+    preloadImages();
   }, []);
 
   const onConfirmPressed = () => {
